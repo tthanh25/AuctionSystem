@@ -1,6 +1,6 @@
-import Header from './Header'
+import Header from "../Header";
 
-function Layout({children}) {
+function CustomerLayout({children}) {
     return (
         <div>
             <Header/>
@@ -13,4 +13,4 @@ function Layout({children}) {
     )
 }
 
-export default Layout;
+export default CustomerLayout;
