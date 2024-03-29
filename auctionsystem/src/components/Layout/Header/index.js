@@ -11,7 +11,7 @@ function Header() {
   const navigate = useNavigate();
 
   return (
-    <header className={cx("wrapper")} style={{ background: "#80deea" }}>
+    <header className={cx("wrapper")} style={{ background: "#01579b" }}>
       <nav className={cx("inner-header")}>
         <ul>
           {/* <li className={cx("logo")}>
@@ -23,11 +23,10 @@ function Header() {
             component="li"
             className={cx("login")}
             sx={{
-              color: "black",
-              position: "fixed", top: "6px", right: "12px",
+              color: "white",
               "&:hover": {
                 backgroundColor: blue[500],
-                color: "white",
+                color: "black",
               },
             }}
             onClick={() => {
