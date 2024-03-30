@@ -17,6 +17,9 @@ function Header() {
           {/* <li className={cx("logo")}>
             <img src={logo} alt="MagicPost" />
           </li> */}
+          <li className={cx("name")}>
+            <p>Xin chào: </p>
+          </li>
           <Button
             size="medium"
             disableFocusRipple
@@ -32,10 +35,11 @@ function Header() {
               },
             }}
             onClick={() => {
-              navigate("/login");
+              localStorage.clear()
+              navigate("/");
             }}
           >
-            Đăng nhập
+            Đăng xuất
           </Button>
         
         </ul>

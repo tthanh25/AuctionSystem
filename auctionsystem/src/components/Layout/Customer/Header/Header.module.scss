@@ -11,29 +11,22 @@
     z-index: 1000;
   }
   
-  .inner-header {
+  .inner-header ul {
     margin: 0;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-right: 24px;
+    padding: 0;
     display: flex;
     height: var(--default-layout-header-height);
-    align-items: center;
-    justify-content: flex-end;
+    align-items: stretch;
+    justify-content: end;
     width: var(--default-layout-header-width + 400);
   }
   
   .inner-header ul li {
-    position: static;
     display: flex;
     align-items: center;
+    margin: 12px;
   }
   
-  .inner-header ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-  }
-  .inner-header ul li a:hover {
-    color: #f7941e;
+  .name {
+    padding-right: 200px;
   }
