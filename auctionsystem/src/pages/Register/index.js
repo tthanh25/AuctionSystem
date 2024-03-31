@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { json, useNavigate } from "react-router-dom";
-import styles from "./Login.module.scss";
+import styles from "./Register.module.scss";
 import classNames from "classnames/bind";
 import img from "~/assets/adorable-dog-fantasy-style_23-2151147843.jpg";
 import Grid from "@mui/material/Grid";
-import { Button, Fade, Link, Paper } from "@mui/material";
-import Header from "~/components/Layout/Header";
+import { Button, Fade, Paper } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { LayoutContext } from "~/App";
 import { useContext } from "react";
 import { blue } from "@mui/material/colors";
 
+
 const cx = classNames.bind(styles);
 
-const Login = () => {
+const Register = () => {
   const [chora, setChora] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [departmentType, setDepartmentType] = useState();
@@ -124,12 +124,12 @@ const Login = () => {
   return (
     <div>
       <Grid container spacing={0} direction="row" className={cx("container")}>
-        <Paper className={cx("paper")} elevation={0}>
+        <Paper className={cx("paper")}>
           <img src={img} alt="thumbnail" className={cx("img")} />
         </Paper>
-        <Paper className={cx("paper")} elevation={0}>
+        <Paper className={cx("paper")}>
           <div className={cx("titleContainer")}>
-            <div>Đăng nhập</div>
+            <div>Đăng ký</div>
           </div>
           <br />
           <div className={cx("inputContainer")}>
@@ -147,6 +147,17 @@ const Login = () => {
               value={password}
               type="password"
               placeholder="Nhập mật khẩu"
+              onChange={(ev) => setPassword(ev.target.value)}
+              className={cx("inputBox")}
+            />
+            <label className={cx("errorLabel")}>{passwordError}</label>
+          </div>
+          <br />
+          <div className={cx("inputContainer")}>
+            <input
+              value={password}
+              type="password"
+              placeholder="Nhập lại mật khẩu"
               onChange={(ev) => setPassword(ev.target.value)}
               className={cx("inputBox")}
             />
@@ -173,13 +184,8 @@ const Login = () => {
               onButtonClick();
             }}
           >
-            Đăng nhập
+            Đăng ký
           </Button>
-          <div>
-            <p>Bạn chưa có tài khoản? <Link href ='/register' underline="hover">Đăng ký</Link></p>
-            <br/>
-            <p></p>
-          </div>
           </div>
         </Paper>
       </Grid>
@@ -200,7 +206,7 @@ const Login = () => {
             <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>
               Thành công
             </AlertTitle>
-            Đăng nhập thành công!
+            Đăng ký thành công!
           </Alert>
         </Fade>
       }
@@ -208,4 +214,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
