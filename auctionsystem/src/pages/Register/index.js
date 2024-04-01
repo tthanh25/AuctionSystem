@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { json, useNavigate } from "react-router-dom";
 import styles from "./Register.module.scss";
 import classNames from "classnames/bind";
@@ -7,118 +7,78 @@ import Grid from "@mui/material/Grid";
 import { Button, Fade, Paper } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import { LayoutContext } from "~/App";
-import { useContext } from "react";
 import { blue } from "@mui/material/colors";
-
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const cx = classNames.bind(styles);
 
 const Register = () => {
-  const [chora, setChora] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [departmentType, setDepartmentType] = useState();
-  const [role, setRole] = useState();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [registrationError, setRegistrationError] = useState("");
   const navigate = useNavigate();
 
-//   const setLogged = useContext(LayoutContext);
+  const validateInputs = () => {
+    let valid = true;
 
-  useEffect(() => {
-    if (chora) {
-      // console.log('chora true');
-      setTimeout(() => {
-        // console.log('chora false');
-        setChora(false);
-      }, 1500);
-      if (role === "1")
-        setTimeout(() => {
-          navigate(`/admin`);
-        }, 2000);
-      else
-        setTimeout(() => {
-          navigate(
-            `/customer`
-          );
-        }, 2000);
-    }
-  }, [loggedIn]);
-
-  const logIn = () => {
-    fetch("http://localhost:8000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    })
-      .then((r) => {
-        if (r.ok) return r.json();
-        else {
-          if (username === "") setLoggedIn(false);
-        //   setLogged(false);
-          window.alert("Sai tài khoản hoặc mật khẩu");
-          return NaN;
-        }
-      })
-      .then((r) => {
-        if (r.username === username) {
-          console.log(r);
-          console.log(r.user);
-          setDepartmentType(r.department);
-          setRole(r.role);
-          setChora(true);
-          setLoggedIn(true);
-        //   setLogged(true);
-          localStorage.setItem(
-            "username",
-            JSON.stringify({ username, token: r.token })
-          );
-          localStorage.setItem("role", JSON.stringify({ role: r.role }));
-          localStorage.setItem(
-            "department",
-            JSON.stringify({ department: r.department })
-          );
-          localStorage.setItem("isLogged", JSON.stringify({ login: true }));
-          localStorage.setItem("Token", r.Token);
-        }
-      })
-      .catch((error) => {
-        console.error("Error logging in:", error);
-      });
-  };
-
-  const onButtonClick = () => {
-    setUsernameError("");
-    setPasswordError("");
-    //setLoggedIn(false);
     if (username.trim() === "") {
       setUsernameError("Hãy nhập username");
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9_-]+$/.test(username.trim())) {
-      setUsernameError("Username không hợp lệ!");
-      return;
+      valid = false;
+    } else {
+      setUsernameError("");
     }
 
     if (password.trim() === "") {
       setPasswordError("Hãy nhập mật khẩu!");
-      return;
-    }
-
-    if (password.length < 5) {
+      valid = false;
+    } else if (password.length < 5) {
       setPasswordError("Mật khẩu phải từ 5 kí tự trở lên!");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (confirmPassword.trim() === "") {
+      setConfirmPasswordError("Hãy nhập lại mật khẩu!");
+      valid = false;
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError("Mật khẩu nhập lại không khớp!");
+      valid = false;
+    } else {
+      setConfirmPasswordError("");
+    }
+
+    return valid;
+  };
+
+  const handleRegister = () => {
+    if (!validateInputs()) {
       return;
     }
 
-    logIn();
-
-    // console.log(username, password)
-    // Authenticate user
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, username, password)
+      .then((userCredential) => {
+        // Registration successful
+        const user = userCredential.user;
+        setRegistrationSuccess(true);
+        // Redirect user to login page after successful registration
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      })
+      .catch((error) => {
+        // Registration failed
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setRegistrationError(errorMessage);
+        console.error("Registration failed:", errorMessage);
+      });
   };
 
   return (
@@ -133,64 +93,45 @@ const Register = () => {
           </div>
           <br />
           <div className={cx("inputContainer")}>
-            <input
-              value={username}
-              placeholder="Nhập username"
-              onChange={(ev) => setUsername(ev.target.value)}
-              className={cx("inputBox")}
-            />
+            <input value={username} placeholder="Nhập username" onChange={(ev) => setUsername(ev.target.value)} className={cx("inputBox")} />
             <label className={cx("errorLabel")}>{usernameError}</label>
           </div>
           <br />
           <div className={cx("inputContainer")}>
-            <input
-              value={password}
-              type="password"
-              placeholder="Nhập mật khẩu"
-              onChange={(ev) => setPassword(ev.target.value)}
-              className={cx("inputBox")}
-            />
+            <input value={password} type="password" placeholder="Nhập mật khẩu" onChange={(ev) => setPassword(ev.target.value)} className={cx("inputBox")} />
             <label className={cx("errorLabel")}>{passwordError}</label>
           </div>
           <br />
           <div className={cx("inputContainer")}>
-            <input
-              value={password}
-              type="password"
-              placeholder="Nhập lại mật khẩu"
-              onChange={(ev) => setPassword(ev.target.value)}
-              className={cx("inputBox")}
-            />
-            <label className={cx("errorLabel")}>{passwordError}</label>
+            <input value={confirmPassword} type="password" placeholder="Nhập lại mật khẩu" onChange={(ev) => setConfirmPassword(ev.target.value)} className={cx("inputBox")} />
+            <label className={cx("errorLabel")}>{confirmPasswordError}</label>
           </div>
           <br />
           <div className={cx("inputContainer")}>
-          <Button
-            size="Large"
-            disableFocusRipple
-            disableRipple
-            component="li"
-            className={cx("login")}
-            sx={{
-              alignItems: "flex-end",
-              color: "white",
-              backgroundColor: '#01579b',
-              "&:hover": {
-                backgroundColor: blue[500],
+            <Button
+              size="Large"
+              disableFocusRipple
+              disableRipple
+              component="li"
+              className={cx("login")}
+              sx={{
+                alignItems: "flex-end",
                 color: "white",
-              },
-            }}
-            onClick={() => {
-              onButtonClick();
-            }}
-          >
-            Đăng ký
-          </Button>
+                backgroundColor: "#01579b",
+                "&:hover": {
+                  backgroundColor: blue[500],
+                  color: "white",
+                },
+              }}
+              onClick={handleRegister}
+            >
+              Đăng ký
+            </Button>
           </div>
         </Paper>
       </Grid>
-      {
-        <Fade in={chora} timeout={1000}>
+      {registrationSuccess && (
+        <Fade in={registrationSuccess} timeout={1000}>
           <Alert
             variant="filled"
             severity="success"
@@ -203,13 +144,30 @@ const Register = () => {
               width: "45%",
             }}
           >
-            <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>
-              Thành công
-            </AlertTitle>
+            <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>Thành công</AlertTitle>
             Đăng ký thành công!
           </Alert>
         </Fade>
-      }
+      )}
+      {registrationError && (
+        <Fade in={registrationError} timeout={1000}>
+          <Alert
+            variant="filled"
+            severity="error"
+            sx={{
+              position: "fixed",
+              fontSize: "1.0rem",
+              left: "48px",
+              bottom: "48px",
+              zIndex: 100,
+              width: "45%",
+            }}
+          >
+            <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>Lỗi</AlertTitle>
+            {registrationError}
+          </Alert>
+        </Fade>
+      )}
     </div>
   );
 };

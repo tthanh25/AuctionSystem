@@ -12,6 +12,10 @@ import { LayoutContext } from "~/App";
 import { useContext } from "react";
 import { blue } from "@mui/material/colors";
 
+import { getAuth, signInWithEmailAndPassword, connectAuthEmulator } from "firebase/auth";
+import { db } from "~/config/firebase";
+
+
 const cx = classNames.bind(styles);
 
 const Login = () => {
@@ -48,46 +52,40 @@ const Login = () => {
   }, [loggedIn]);
 
   const logIn = () => {
-    fetch("http://localhost:8000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    })
-      .then((r) => {
-        if (r.ok) return r.json();
-        else {
-          if (username === "") setLoggedIn(false);
-        //   setLogged(false);
-          window.alert("Sai tài khoản hoặc mật khẩu");
-          return NaN;
-        }
-      })
-      .then((r) => {
-        if (r.username === username) {
-          console.log(r);
-          console.log(r.user);
-          setDepartmentType(r.department);
-          setRole(r.role);
-          setChora(true);
-          setLoggedIn(true);
-        //   setLogged(true);
-          localStorage.setItem(
-            "username",
-            JSON.stringify({ username, token: r.token })
-          );
-          localStorage.setItem("role", JSON.stringify({ role: r.role }));
-          localStorage.setItem(
-            "department",
-            JSON.stringify({ department: r.department })
-          );
-          localStorage.setItem("isLogged", JSON.stringify({ login: true }));
-          localStorage.setItem("Token", r.Token);
-        }
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, username, password)
+      .then((userCredential) => {
+        // Signed in successfully
+        const user = userCredential.user;
+        setLoggedIn(true);
+        setChora(true);
+        // Retrieve additional user data from Firestore if needed
+        // Example: Fetch user data based on username
+        db.collection("users")
+          .where("username", "==", username)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const userData = doc.data();
+              setDepartmentType(userData.department);
+              setRole(userData.role);
+              localStorage.setItem("username", JSON.stringify({ username, token: user.accessToken }));
+              localStorage.setItem("role", JSON.stringify({ role: userData.role }));
+              localStorage.setItem("department", JSON.stringify({ department: userData.department }));
+              localStorage.setItem("isLogged", JSON.stringify({ login: true }));
+              localStorage.setItem("Token", user.accessToken);
+            });
+          })
+          .catch((error) => {
+            console.error("Error getting user data:", error);
+          });
       })
       .catch((error) => {
-        console.error("Error logging in:", error);
+        // Error occurred during sign-in
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error("Error logging in:", errorMessage);
+        // Handle errors, update state or show error message to the user
       });
   };
 
@@ -100,10 +98,10 @@ const Login = () => {
       return;
     }
 
-    if (!/^[a-zA-Z0-9_-]+$/.test(username.trim())) {
-      setUsernameError("Username không hợp lệ!");
-      return;
-    }
+    // if (!/^[a-zA-Z0-9_-]+$/.test(username.trim())) {
+    //   setUsernameError("Username không hợp lệ!");
+    //   return;
+    // }
 
     if (password.trim() === "") {
       setPasswordError("Hãy nhập mật khẩu!");
