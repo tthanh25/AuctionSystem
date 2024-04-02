@@ -9,6 +9,8 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { blue } from "@mui/material/colors";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { db } from "~/config/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const cx = classNames.bind(styles);
 
@@ -89,19 +91,32 @@ const Register = () => {
     }
 
     const auth = getAuth();
-    createUserWithEmailAndPassword(auth, username, password)
+    createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Registration successful
         const user = userCredential.user;
-        setRegistrationSuccess(true);
-        // Redirect user to login page after successful registration
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        const uid = user.uid;
+
+        // Store the additional information in Firebase Realtime Database
+        setDoc(doc(db, "users", uid), {
+          name: name,
+          username,
+          phone: phone,
+        })
+          .then(() => {
+            setRegistrationSuccess(true);
+            // Redirect user to login page after successful registration
+            setTimeout(() => {
+              navigate("/login");
+            }, 2000);
+          })
+          .catch((error) => {
+            console.error("Error adding user information: ", error);
+            setRegistrationError("Lỗi khi lưu thông tin người dùng!");
+          });
       })
       .catch((error) => {
         // Registration failed
-        const errorCode = error.code;
         const errorMessage = error.message;
         setRegistrationError(errorMessage);
         console.error("Registration failed:", errorMessage);
