@@ -10,13 +10,13 @@ const publicRoutes = [
     {path: '/register', component : Register, layout: HeaderOnly},
     {path: '/manage', component : Home, layout: HeaderOnly},
     {path: '/payment', component : Home, layout: HeaderOnly},
-    {path: '/admin', component : Home, layout: AdminLayout},
-    {path: '/customer', component : Home, layout: CustomerLayout},
+
     
 ]
 
 const privateRoutes = [
-
+    {path: '/admin', component : Home, layout: AdminLayout},
+    {path: '/customer', component : Home, layout: CustomerLayout},
 ]
 
 export {

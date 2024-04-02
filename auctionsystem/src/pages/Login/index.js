@@ -26,6 +26,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [errorName, setErrorName] = useState("");
   const navigate = useNavigate();
 
 //   const setLogged = useContext(LayoutContext);
@@ -54,10 +55,12 @@ const Login = () => {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, username, password)
       .then((userCredential) => {
+        setErrorName("");
         // Signed in successfully
         const user = userCredential.user;
         setLoggedIn(true);
         setChora(true);
+        localStorage.setItem("isLogged", JSON.stringify({ login: true }));
         // Retrieve additional user data from Firestore if needed
         // Example: Fetch user data based on username
         db.collection("users")
@@ -69,18 +72,19 @@ const Login = () => {
               setRole(userData.role);
               localStorage.setItem("username", JSON.stringify({ username, token: user.accessToken }));
               localStorage.setItem("role", JSON.stringify({ role: userData.role }));
-              localStorage.setItem("isLogged", JSON.stringify({ login: true }));
               localStorage.setItem("Token", user.accessToken);
             });
           })
           .catch((error) => {
             console.error("Error getting user data:", error);
+            setErrorName(error);
           });
       })
       .catch((error) => {
         // Error occurred during sign-in
         const errorCode = error.code;
         const errorMessage = error.message;
+        setErrorName(errorMessage);
         console.error("Error logging in:", errorMessage);
         // Handle errors, update state or show error message to the user
       });
@@ -89,6 +93,7 @@ const Login = () => {
   const onButtonClick = () => {
     setUsernameError("");
     setPasswordError("");
+    setErrorName("");
     //setLoggedIn(false);
     if (username.trim() === "") {
       setUsernameError("Hãy nhập username");
@@ -199,6 +204,25 @@ const Login = () => {
           </Alert>
         </Fade>
       }
+      {errorName && !loggedIn && (
+        <Fade in={errorName} timeout={500}>
+          <Alert
+            variant="filled"
+            severity="error"
+            sx={{
+              position: "fixed",
+              fontSize: "1.0rem",
+              left: "48px",
+              bottom: "48px",
+              zIndex: 100,
+              width: "45%",
+            }}
+          >
+            <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>Lỗi:</AlertTitle>
+            {errorName}
+          </Alert>
+        </Fade>
+      )}
     </div>
   );
 };

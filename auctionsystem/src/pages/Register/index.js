@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Register.module.scss";
 import classNames from "classnames/bind";
@@ -25,6 +25,13 @@ const Register = () => {
  const [registrationSuccess, setRegistrationSuccess] = useState(false);
  const [registrationError,setRegistrationError] = useState("");
   const navigate = useNavigate();
+
+useEffect(() => {
+  if (registrationSuccess)
+  setTimeout(() => {
+    navigate("/login");
+  }, 2000);
+},[registrationSuccess]);
 
   const validateInputs = () => {
     let valid = true;
@@ -86,6 +93,9 @@ const Register = () => {
   };
 
   const handleRegister = () => {
+    setErrorName("");
+    setRegistrationError("");
+    setRegistrationSuccess(false);
     if (!validateInputs()) {
       return;
     }
@@ -106,9 +116,6 @@ const Register = () => {
           .then(() => {
             setRegistrationSuccess(true);
             // Redirect user to login page after successful registration
-            setTimeout(() => {
-              navigate("/login");
-            }, 2000);
           })
           .catch((error) => {
             console.error("Error adding user information: ", error);
@@ -184,7 +191,7 @@ const Register = () => {
         </Paper>
       </Grid>
       {registrationSuccess && (
-        <Fade in={registrationSuccess} timeout={1000}>
+        <Fade in={registrationSuccess} timeout={500}>
           <Alert
             variant="filled"
             severity="success"
@@ -203,7 +210,7 @@ const Register = () => {
         </Fade>
       )}
       {registrationError && (
-        <Fade in={registrationError} timeout={1000}>
+        <Fade in={registrationError} timeout={500}>
           <Alert
             variant="filled"
             severity="error"
@@ -222,7 +229,7 @@ const Register = () => {
         </Fade>
       )}
       {errorName && (
-        <Fade in={errorName} timeout={1000}>
+        <Fade in={errorName} timeout={500}>
           <Alert
             variant="filled"
             severity="error"
