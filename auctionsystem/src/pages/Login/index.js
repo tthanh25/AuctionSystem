@@ -21,7 +21,6 @@ const cx = classNames.bind(styles);
 const Login = () => {
   const [chora, setChora] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [departmentType, setDepartmentType] = useState();
   const [role, setRole] = useState();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -67,11 +66,9 @@ const Login = () => {
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               const userData = doc.data();
-              setDepartmentType(userData.department);
               setRole(userData.role);
               localStorage.setItem("username", JSON.stringify({ username, token: user.accessToken }));
               localStorage.setItem("role", JSON.stringify({ role: userData.role }));
-              localStorage.setItem("department", JSON.stringify({ department: userData.department }));
               localStorage.setItem("isLogged", JSON.stringify({ login: true }));
               localStorage.setItem("Token", user.accessToken);
             });

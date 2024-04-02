@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./Register.module.scss";
 import classNames from "classnames/bind";
 import img from "~/assets/adorable-dog-fantasy-style_23-2151147843.jpg";
@@ -14,43 +14,70 @@ const cx = classNames.bind(styles);
 
 const Register = () => {
   const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [registrationError, setRegistrationError] = useState("");
+ const [errorName, setErrorName] = useState("");
+ const [registrationSuccess, setRegistrationSuccess] = useState(false);
+ const [registrationError,setRegistrationError] = useState("");
   const navigate = useNavigate();
 
   const validateInputs = () => {
     let valid = true;
 
-    if (username.trim() === "") {
-      setUsernameError("Hãy nhập username");
+    if (name.trim() === "") {
+      setErrorName("Hãy nhập Họ và tên");
       valid = false;
+      return valid;
     } else {
-      setUsernameError("");
+      setErrorName("");
+    }
+    if (username.trim() === "") {
+      setErrorName("Hãy nhập Username");
+      valid = false;
+      return valid;
+    } else {
+      setErrorName("");
+    }
+    if (phone.trim() === "") {
+      setErrorName("Hãy nhập số điện thoại");
+      valid = false;
+      return valid;
+    } else {
+      setErrorName("");
+    }
+    if (email.trim() === "") {
+      setErrorName("Hãy nhập Email");
+      valid = false;
+      return valid;
+    } else {
+      setErrorName("");
     }
 
     if (password.trim() === "") {
-      setPasswordError("Hãy nhập mật khẩu!");
+      setErrorName("Hãy nhập mật khẩu!");
       valid = false;
+      return valid;
     } else if (password.length < 5) {
-      setPasswordError("Mật khẩu phải từ 5 kí tự trở lên!");
+      setErrorName("Mật khẩu phải từ 5 kí tự trở lên!");
       valid = false;
+      return valid;
     } else {
-      setPasswordError("");
+      setErrorName("");
     }
 
     if (confirmPassword.trim() === "") {
-      setConfirmPasswordError("Hãy nhập lại mật khẩu!");
+      setErrorName("Hãy nhập lại mật khẩu!");
       valid = false;
+      return valid;
     } else if (password !== confirmPassword) {
-      setConfirmPasswordError("Mật khẩu nhập lại không khớp!");
+      setErrorName("Mật khẩu nhập lại không khớp!");
       valid = false;
+      return valid;
     } else {
-      setConfirmPasswordError("");
+      setErrorName("");
     }
 
     return valid;
@@ -91,22 +118,32 @@ const Register = () => {
           <div className={cx("titleContainer")}>
             <div>Đăng ký</div>
           </div>
-          <br />
           <div className={cx("inputContainer")}>
-            <input value={username} placeholder="Nhập username" onChange={(ev) => setUsername(ev.target.value)} className={cx("inputBox")} />
-            <label className={cx("errorLabel")}>{usernameError}</label>
+            <div className={cx("registerField")}>
+              <input value={name} placeholder="Họ và tên" onChange={(ev) => setName(ev.target.value)} className={cx("inputBox")} />
+              <label className={cx("errorLabel")}>{}</label>
+            </div>
+            <div className={cx("registerField")}>
+              <input value={username} placeholder="Username" onChange={(ev) => setUsername(ev.target.value)} className={cx("inputBox")} />
+              <label className={cx("errorLabel")}>{}</label>
+            </div>
+            <div className={cx("registerField")}>
+              <input value={email} placeholder="Email" onChange={(ev) => setEmail(ev.target.value)} className={cx("inputBox")} />
+              <label className={cx("errorLabel")}>{}</label>
+            </div>
+            <div className={cx("registerField")}>
+              <input value={phone} placeholder="Số điện thoại" onChange={(ev) => setPhoneNumber(ev.target.value)} className={cx("inputBox")} />
+              <label className={cx("errorLabel")}>{}</label>
+            </div>
+            <div className={cx("registerField")}>
+              <input value={password} type="password" placeholder="Mật khẩu" onChange={(ev) => setPassword(ev.target.value)} className={cx("inputBox")} />
+              <label className={cx("errorLabel")}>{}</label>
+            </div>
+            <div className={cx("registerField")}>
+              <input value={confirmPassword} type="password" placeholder="Nhập lại mật khẩu" onChange={(ev) => setConfirmPassword(ev.target.value)} className={cx("inputBox")} />
+              <label className={cx("errorLabel")}>{}</label>
+            </div>
           </div>
-          <br />
-          <div className={cx("inputContainer")}>
-            <input value={password} type="password" placeholder="Nhập mật khẩu" onChange={(ev) => setPassword(ev.target.value)} className={cx("inputBox")} />
-            <label className={cx("errorLabel")}>{passwordError}</label>
-          </div>
-          <br />
-          <div className={cx("inputContainer")}>
-            <input value={confirmPassword} type="password" placeholder="Nhập lại mật khẩu" onChange={(ev) => setConfirmPassword(ev.target.value)} className={cx("inputBox")} />
-            <label className={cx("errorLabel")}>{confirmPasswordError}</label>
-          </div>
-          <br />
           <div className={cx("inputContainer")}>
             <Button
               size="Large"
@@ -115,6 +152,7 @@ const Register = () => {
               component="li"
               className={cx("login")}
               sx={{
+                marginTop: "32px",
                 alignItems: "flex-end",
                 color: "white",
                 backgroundColor: "#01579b",
@@ -165,6 +203,25 @@ const Register = () => {
           >
             <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>Lỗi</AlertTitle>
             {registrationError}
+          </Alert>
+        </Fade>
+      )}
+      {errorName && (
+        <Fade in={errorName} timeout={1000}>
+          <Alert
+            variant="filled"
+            severity="error"
+            sx={{
+              position: "fixed",
+              fontSize: "1.0rem",
+              left: "48px",
+              bottom: "48px",
+              zIndex: 100,
+              width: "45%",
+            }}
+          >
+            <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>Lỗi:</AlertTitle>
+            {errorName}
           </Alert>
         </Fade>
       )}
