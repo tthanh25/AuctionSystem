@@ -110,8 +110,9 @@ useEffect(() => {
         // Store the additional information in Firebase Realtime Database
         setDoc(doc(db, "users", uid), {
           name: name,
-          username,
+          username: username,
           phone: phone,
+          role: 0,
         })
           .then(() => {
             setRegistrationSuccess(true);
