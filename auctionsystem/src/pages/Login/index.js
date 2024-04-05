@@ -11,9 +11,7 @@ import { LayoutContext } from "~/App";
 import { useContext } from "react";
 import { blue } from "@mui/material/colors";
 
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { db } from "~/config/firebase";
-import { collection, query, doc, getDoc, where } from "firebase/firestore";
+import firebaseService from "~/services/firebase";
 
 const cx = classNames.bind(styles);
 
@@ -39,9 +37,8 @@ const Login = () => {
   }, [loggedIn]);
 
   const logIn = async () => {
-    const auth = getAuth();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      const userCredential = await firebaseService.signIn(username, password);
       setErrorName("");
       const user = userCredential.user;
       setLoggedIn(true);
@@ -49,14 +46,11 @@ const Login = () => {
       localStorage.setItem("isLogged", JSON.stringify({ login: true }));
 
       // Retrieve additional user data from Firestore if needed
-      // Example: Fetch user data based on user UID
-      const userData = await getDoc(doc(db, "users", user.uid));
+      const userData = await firebaseService.getUserData(user.uid);
 
-      if (userData.exists()) {
-        const info = userData.data()
-        // setRole(userData.role);
-        localStorage.setItem("username", info.name);
-        localStorage.setItem("role", info.role);
+      if (userData) {
+        localStorage.setItem("username", userData.name);
+        localStorage.setItem("role", userData.role);
       } else {
         console.log("No such data of user");
       }
@@ -67,7 +61,6 @@ const Login = () => {
       // Handle errors, update state or show error message to the user
     }
   };
-
 
   const onButtonClick = () => {
     setUsernameError("");
