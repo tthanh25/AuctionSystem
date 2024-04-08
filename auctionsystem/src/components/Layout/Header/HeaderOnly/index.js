@@ -1,5 +1,5 @@
 import classNames from "classnames/bind";
-import styles from "./Header.module.scss";
+import styles from "./HeaderOnly.module.scss";
 // import logo from "~/assets/logo-1@2x - Copy.png";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";

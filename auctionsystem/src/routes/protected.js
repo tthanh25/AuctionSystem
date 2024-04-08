@@ -1,21 +1,29 @@
-function Protected({ role, department, path, children }) {
-    if (role == 0 && department == 0 && path == "/invoice") return children;
-    else if (
-      role == 2 &&
-      (path == "/leader" ||
-        path == "/leader/managestore" ||
-        path == "/leader/statistic" ||
-        path == "/leader/manageaccount")
-    )
-      return children;
-    else if (
-      path.includes(
-        `/${department == 0 ? "trans" : "consol"}${
-          role == 0 ? "staff" : "manager"
-        }`
+import AdminLayout from "~/components/Layout/Admin";
+import CustomerLayout from "~/components/Layout/Customer";
+
+function Protected({ role, path, children,isLogged }) {
+    if (isLogged && path == `/detail/:itemId` && role == 1)  { return (
+      <AdminLayout>{children}</AdminLayout>
       )
+      }
+    if (isLogged && path == `/detail/:itemId` && role == 0)  { return (
+      <CustomerLayout>{children}</CustomerLayout>
     )
-      return children;
+      }
+    if ( 
+      role == 1 &&
+      (path == "/admin" ||
+        path == "/manage" 
+        )
+    )
+     { return (children)
+
+      }
+    else if (
+      role == 0 && (path == "/customer")
+    )
+      {return (children)
+      ;}
     else return <h1>Bạn không có quyền truy cập</h1>;
   }
   

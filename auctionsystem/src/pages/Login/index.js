@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import { Button, Fade, Paper } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import { LayoutContext } from "~/App";
+import { LayoutContext, getRole } from "~/App";
 import { useContext } from "react";
 import { blue } from "@mui/material/colors";
 
@@ -24,7 +24,8 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [errorName, setErrorName] = useState("");
   const navigate = useNavigate();
-
+  const setLogged = useContext(LayoutContext);
+  const setRole = useContext(getRole);
   useEffect(() => {
     if (chora) {
       setTimeout(() => {
@@ -38,16 +39,19 @@ const Login = () => {
 
   const logIn = async () => {
     try {
+      setRole(0);
+      setLogged(false);
       const userCredential = await firebaseService.signIn(username, password);
       setErrorName("");
       const user = userCredential.user;
       setLoggedIn(true);
+      setLogged(true);
       setChora(true);
       localStorage.setItem("isLogged", JSON.stringify({ login: true }));
 
       // Retrieve additional user data from Firestore if needed
       const userData = await firebaseService.getUserData(user.uid);
-
+      setRole(userData.role);
       if (userData) {
         localStorage.setItem("username", userData.name);
         localStorage.setItem("role", userData.role);
