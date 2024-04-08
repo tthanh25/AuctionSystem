@@ -1,101 +1,64 @@
-import classNames from "classnames/bind";
-import styles from "./Home.module.scss"
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
-import { useNavigate, Link } from "react-router-dom";
-import { Button, Divider, InputAdornment, Paper, TextField } from "@mui/material"
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, Divider, ImageList, ImageListItem } from "@mui/material";
+import firebaseService from "~/services/firebase";
 
-const cx = classNames.bind(styles);
 function Home() {
-        const navigate = useNavigate();
-        return (
-                <ImageList sx={{margin: "100px",  }} cols={3}>
-                  {itemData.map((item) => (
-                    <Button onClick={() => {
-                        navigate("/detail/0")
-                    }}>
-                            <ImageListItem key={item.img} >
-                              <img
-                                srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                src={`${item.img}?w=248&fit=crop&auto=format`}
-                                alt={item.title}
-                                loading="lazy"
-                              />
-                              <p style={{justifyContent:"start", display:"flex", fontSize:"16px", alignItems:"center",height:"48px", fontWeight:"bold"}}>Tên
-                              </p>
-                              <Divider/>
-                              <p style={{justifyContent:"start", display:"flex", fontSize:"16px", alignItems:"center",height:"48px"}}>100$</p>
-                              <p style={{justifyContent:"start", display:"flex", fontSize:"16px", alignItems:"center",height:"32px"}}>16 giờ 32 phút còn lại</p>
-                              <Divider/>
-                            </ImageListItem>
-                    </Button>
-                  ))}
-                </ImageList>
-              );
+  const navigate = useNavigate();
+  const [itemData, setItemData] = useState([]);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const items = await firebaseService.getItems();
+        const itemsWithTimeLeft = calculateTimeLeft(items);
+        setItemData(itemsWithTimeLeft);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  const calculateTimeLeft = (items) => {
+    return items.map((item) => {
+      const auctionEndTime = item.auctionEnd.toMillis(); // Convert timestamp to milliseconds
+      const currentTime = Date.now(); // Get current time in milliseconds
+      let timeDiff = Math.max(0, auctionEndTime - currentTime); // Ensure time difference is non-negative
+      const hoursLeft = Math.floor(timeDiff / (1000 * 60 * 60)); // Calculate remaining hours
+      timeDiff -= hoursLeft * (1000 * 60 * 60); // Subtract hours from time difference
+      const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Calculate remaining minutes
+      timeDiff -= minutesLeft * (1000 * 60); // Subtract minutes from time difference
+      const secondsLeft = Math.floor(timeDiff / 1000); // Calculate remaining seconds
+      return { ...item, timeLeft: { hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft } };
+    });
+  };
+
+  const handleItemClick = (itemId) => {
+    navigate(`/detail/${itemId}`);
+  };
+
+  return (
+    <div>
+      <ImageList cols={3}>
+        {itemData.map((item) => (
+          <Button key={item.id} onClick={() => handleItemClick(item.id)}>
+            <ImageListItem>
+              <img src={item.imageUrl} alt={item.name} />
+              <p>{item.name}</p>
+              <Divider />
+              <p>{item.currentPrice} $</p>
+              <p>
+                {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây còn lại
+              </p>
+              <Divider />
+            </ImageListItem>
+          </Button>
+        ))}
+      </ImageList>
+    </div>
+  );
 }
+
 export default Home;
-
-
-
-const itemData = [
-  {
-    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-    title: 'Breakfast',
-    author: '@bkristastucchio',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-    title: 'Burger',
-    author: '@rollelflex_graphy726',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-    title: 'Camera',
-    author: '@helloimnik',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-    title: 'Coffee',
-    author: '@nolanissac',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-    title: 'Hats',
-    author: '@hjrc33',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
-    title: 'Honey',
-    author: '@arwinneil',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
-    title: 'Basketball',
-    author: '@tjdragotta',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
-    title: 'Fern',
-    author: '@katie_wasserman',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
-    title: 'Mushrooms',
-    author: '@silverdalex',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
-    title: 'Tomato basil',
-    author: '@shelleypauls',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
-    title: 'Sea star',
-    author: '@peterlaster',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
-    title: 'Bike',
-    author: '@southside_customs',
-  },
-];

@@ -1,6 +1,6 @@
 // services/FirebaseService.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
@@ -38,6 +38,35 @@ class FirebaseService {
 
   async setUserDocument(uid, data) {
     return await setDoc(doc(this.db, "users", uid), data);
+  }
+
+  async getItems() {
+    try {
+      const q = query(collection(this.db, "items"));
+      const querySnapshot = await getDocs(q);
+      const items = [];
+
+      for (const doc of querySnapshot.docs) {
+        const itemData = doc.data();
+        const imageUrl = await this.getImageUrl(itemData.img); // Get image URL from Firebase Storage
+        items.push({ id: doc.id, ...itemData, imageUrl });
+      }
+
+      return items;
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      throw error;
+    }
+  }
+
+  async getImageUrl(imagePath) {
+    try {
+      const storageRef = ref(this.storage, imagePath);
+      return await getDownloadURL(storageRef);
+    } catch (error) {
+      console.error("Error fetching image URL:", error);
+      throw error;
+    }
   }
 
   // Storage Services
