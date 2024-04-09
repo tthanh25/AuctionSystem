@@ -9,7 +9,7 @@ const cx = classNames.bind(styles);
 
 function Header() {
   const navigate = useNavigate();
-
+  const name = localStorage.getItem("username");
   return (
     <header className={cx("wrapper")} style={{ background: "#01579b" }}>
       <nav className={cx("inner-header")}>
@@ -18,7 +18,7 @@ function Header() {
             <img src={logo} alt="MagicPost" />
           </li> */}
           <li className={cx("name")}>
-            <p>Xin chào: </p>
+            <p>Xin chào: {name}</p>
           </li>
           <Button
             size="medium"

@@ -2,24 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Divider, ImageList, ImageListItem } from "@mui/material";
 import firebaseService from "~/services/firebase";
+import Paper from '@mui/material/Paper';
 
 function Home() {
   const navigate = useNavigate();
   const [itemData, setItemData] = useState([]);
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const items = await firebaseService.getItems();
-        const itemsWithTimeLeft = calculateTimeLeft(items);
-        setItemData(itemsWithTimeLeft);
-      } catch (error) {
-        console.error("Error fetching items:", error);
-      }
-    };
 
-    fetchItems();
-  }, []);
 
   const calculateTimeLeft = (items) => {
     return items.map((item) => {
@@ -39,24 +28,58 @@ function Home() {
     navigate(`/detail/${itemId}`);
   };
 
+
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (countdown === 0) {
+      // Xử lý khi thời gian chạy ngược đạt 0
+      // Ví dụ: Hiển thị thông báo hoặc thực hiện một hành động
+      console.log('Countdown finished!');
+    }
+    const fetchItems = async () => {
+      try {
+        const items = await firebaseService.getItems();
+        const itemsWithTimeLeft = calculateTimeLeft(items);
+        setItemData(itemsWithTimeLeft);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    };
+
+    fetchItems();
+  }, [countdown]);
+
   return (
-    <div>
-      <ImageList cols={3}>
-        {itemData.map((item) => (
-          <Button key={item.id} onClick={() => handleItemClick(item.id)}>
-            <ImageListItem>
-              <img src={item.imageUrl} alt={item.name} />
-              <p>{item.name}</p>
-              <Divider />
-              <p>{item.currentPrice} $</p>
-              <p>
-                {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây còn lại
-              </p>
-              <Divider />
-            </ImageListItem>
-          </Button>
-        ))}
-      </ImageList>
+    <div style={{marginTop:"99px",marginBottom:"99px"}}>
+        <ImageList cols={3}>
+          {itemData.map((item) => (
+            <Button key={item.id} onClick={() => handleItemClick(item.id)}>
+              <Paper elevation={3} sx={{padding:"24px"}}>
+                <ImageListItem>
+                  <img src={item.imageUrl} alt={item.name} />
+                  <p>{item.name}</p>
+                  <Divider />
+                  <p>{item.currentPrice} $</p>
+                  <p>
+                    {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây còn lại
+                  </p>
+                  <Divider />
+                </ImageListItem>
+              </Paper>
+            </Button>
+          ))}
+        </ImageList>
     </div>
   );
 }
