@@ -47,7 +47,7 @@ const Login = () => {
       setLoggedIn(true);
       setLogged(true);
       setChora(true);
-      localStorage.setItem("isLogged", JSON.stringify({ login: true }));
+      localStorage.setItem("isLogged", true);
 
       // Retrieve additional user data from Firestore if needed
       const userData = await firebaseService.getUserData(user.uid);
@@ -55,6 +55,7 @@ const Login = () => {
       if (userData) {
         localStorage.setItem("username", userData.name);
         localStorage.setItem("role", userData.role);
+        localStorage.setItem("uid", user.uid);
       } else {
         console.log("No such data of user");
       }

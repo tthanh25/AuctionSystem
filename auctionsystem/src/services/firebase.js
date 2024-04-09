@@ -1,7 +1,7 @@
 // services/FirebaseService.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, runTransaction } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 import firebaseConfig from "./config";
@@ -28,6 +28,17 @@ class FirebaseService {
 
   signIn(email, password) {
     return signInWithEmailAndPassword(this.auth, email, password);
+  }
+
+  // Get current user ID
+  getCurrentUserId() {
+    onAuthStateChanged(this.auth, (user) => {
+      if (user) {
+        console.log(user)
+        return user.uid;
+      }
+    });
+    return null;
   }
 
   // Firestore Services
@@ -59,6 +70,22 @@ class FirebaseService {
     }
   }
 
+  async getItemById(itemId) {
+    try {
+      const itemDoc = await getDoc(doc(this.db, "items", itemId));
+      if (itemDoc.exists()) {
+        const itemData = itemDoc.data();
+        const imageUrl = await this.getImageUrl(itemData.img);
+        return { id: itemDoc.id, ...itemData, imageUrl };
+      } else {
+        throw new Error("Item not found");
+      }
+    } catch (error) {
+      console.error("Error fetching item by ID:", error);
+      throw error;
+    }
+  }
+
   async getImageUrl(imagePath) {
     try {
       const storageRef = ref(this.storage, imagePath);
@@ -74,6 +101,87 @@ class FirebaseService {
     const fileRef = ref(this.storage, storagePath);
     return getDownloadURL(fileRef);
   }
+
+  // Auciton Services
+  async placeBid(itemId, bidderId, bidAmount) {
+    try {
+      const itemRef = doc(this.db, "items", itemId);
+      const bidCollectionRef = collection(this.db, "bids");
+
+      await runTransaction(this.db, async (transaction) => {
+        const itemDoc = await transaction.get(itemRef);
+        if (!itemDoc.exists()) {
+          throw new Error("Item does not exist");
+        }
+
+        const itemData = itemDoc.data();
+        if (bidAmount <= itemData.currentPrice) {
+          throw new Error("Bid amount must be higher than current price");
+        }
+
+        const bidData = {
+          itemId,
+          bidderId,
+          bidAmount,
+          timestamp: new Date(),
+        };
+        // console.log(bidData)
+
+        transaction.update(itemRef, {
+          currentPrice: bidAmount,
+        });
+
+        // Use addDoc to add a new document to the bids collection
+        await addDoc(bidCollectionRef, bidData);
+      });
+    } catch (error) {
+      console.error("Error placing bid:", error);
+      throw error;
+    }
+  }
+
+  async getBidHistory(itemId) {
+    try {
+      const bidRef = collection(this.db, "bids");
+      const querySnapshot = await getDocs(query(bidRef.where("itemId", "==", itemId).orderBy("timestamp", "desc")));
+
+      const bidHistory = [];
+      querySnapshot.forEach((doc) => {
+        bidHistory.push(doc.data());
+      });
+
+      return bidHistory;
+    } catch (error) {
+      console.error("Error fetching bid history:", error);
+      throw error;
+    }
+  }
+
+  // async getBidHistory(itemId, onUpdate) {
+  //   try {
+  //     const bidRef = collection(this.db, "bids");
+  //     const querySnapshot = await getDocs(query(bidRef.where("itemId", "==", itemId).orderBy("timestamp", "desc")));
+
+  //     const bidHistory = [];
+  //     querySnapshot.forEach((doc) => {
+  //       bidHistory.push(doc.data());
+  //     });
+
+  //     // Real-time listener for new bids
+  //     const unsubscribe = onSnapshot(query(bidRef.where("itemId", "==", itemId).orderBy("timestamp", "desc")), (snapshot) => {
+  //       const newBids = [];
+  //       snapshot.forEach((doc) => {
+  //         newBids.push(doc.data());
+  //       });
+  //       onUpdate(newBids);
+  //     });
+
+  //     return unsubscribe; // Return unsubscribe function
+  //   } catch (error) {
+  //     console.error("Error fetching bid history:", error);
+  //     throw error;
+  //   }
+  // }
 }
 
 const firebaseService = new FirebaseService();
