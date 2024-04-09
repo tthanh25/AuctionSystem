@@ -2,12 +2,13 @@ import AdminLayout from "~/components/Layout/Admin";
 import CustomerLayout from "~/components/Layout/Customer";
 
 function Protected({ role, path, children,isLogged }) {
-    if (isLogged && path == `/detail/:itemId` && role == 1)  { return (
-      <AdminLayout>{children}</AdminLayout>
+    if (path == "/" || path == "/login" || path == "/register" || path == "/payment" || path == "/detail/:itemId") return (children)
+    if (isLogged && path == "/detail/:itemId" && role == 1)  { return (
+      {children}
       )
       }
-    if (isLogged && path == `/detail/:itemId` && role == 0)  { return (
-      <CustomerLayout>{children}</CustomerLayout>
+    if (isLogged && path == "/detail/:itemId" && role == 0)  { return (
+      {children}
     )
       }
     if ( 

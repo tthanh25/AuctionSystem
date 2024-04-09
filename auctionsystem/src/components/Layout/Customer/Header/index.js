@@ -35,7 +35,7 @@ function Header() {
               },
             }}
             onClick={() => {
-              localStorage.clear()
+              localStorage.clear();
               navigate("/");
             }}
           >

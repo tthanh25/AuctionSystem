@@ -6,20 +6,18 @@ import Login from '~/pages/Login'
 import Register from '~/pages/Register'
 import Detail from '~/pages/Detail'
 const publicRoutes = [
-    {path: '/', component : Home, layout: HeaderOnly},
-    {path: '/login', component : Login, layout: HeaderOnly},
-    {path: '/register', component : Register, layout: HeaderOnly},
-    {path: '/payment', component : Home, layout: HeaderOnly},
+    {path: '/', component : Home  },
+    {path: '/login', component : Login},
+    {path: '/register', component : Register},
+    {path: '/payment', component : Home},
     {path: '/detail/:itemId', component: Detail},
+    {path: '/admin', component : Home, layout: AdminLayout},
+    {path: '/customer', component : Home, layout: CustomerLayout},
     
 ]
 
 const privateRoutes = [
-    {path: '/manage', component : Home, layout: HeaderOnly},
-    {path: '/admin', component : Home, layout: AdminLayout},
-    {path: '/customer', component : Home, layout: CustomerLayout},
-    {path: '/detail/:itemId', component: Detail},
-
+    {path: '/manage', component : Home, layout: AdminLayout},
 ]
 
 export {

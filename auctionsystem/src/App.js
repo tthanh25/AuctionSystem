@@ -5,6 +5,8 @@ import { useState } from 'react';
 import Protected from './routes/protected';
 import { createContext } from 'react';
 import HeaderOnly from './components/Layout/Header';
+import AdminLayout from './components/Layout/Admin';
+import CustomerLayout from './components/Layout/Customer';
 
 export const LayoutContext = createContext();
 export const getRole = createContext();
@@ -22,7 +24,12 @@ function App() {
               publicRoutes.map((route,index) => {
                 const Page = route.component
                 let Layout = HeaderOnly
+                const path = route.path
                 if(route.layout) Layout = route.layout
+                if (isLogged && path === "/detail/:itemId" && role == 1)   return <Route key={index} path={route.path} element={<AdminLayout><Page/></AdminLayout>} />
+                   
+                if (isLogged && path == "/detail/:itemId" && role == 0)   return <Route key={index} path={route.path} element={<CustomerLayout><Page/></CustomerLayout>} />
+                
                 return <Route key={index} path={route.path} element={<Layout><Page/></Layout>} />
               })
             }

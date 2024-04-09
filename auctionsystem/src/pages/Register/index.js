@@ -50,8 +50,8 @@ const Register = () => {
     } else if (password.trim() === "") {
       setErrorName("Hãy nhập mật khẩu!");
       valid = false;
-    } else if (password.length < 5) {
-      setErrorName("Mật khẩu phải từ 5 kí tự trở lên!");
+    } else if (password.length < 6) {
+      setErrorName("Mật khẩu phải từ 6 kí tự trở lên!");
       valid = false;
     } else if (confirmPassword.trim() === "") {
       setErrorName("Hãy nhập lại mật khẩu!");
@@ -72,6 +72,7 @@ const Register = () => {
     setRegistrationSuccess(false);
 
     if (!validateInputs()) {
+      setRegistrationError(errorName);
       return;
     }
 
@@ -110,27 +111,21 @@ const Register = () => {
           <div className={cx("inputContainer")}>
             <div className={cx("registerField")}>
               <input value={name} placeholder="Họ và tên" onChange={(ev) => setName(ev.target.value)} className={cx("inputBox")} />
-              <label className={cx("errorLabel")}>{errorName}</label>
             </div>
             <div className={cx("registerField")}>
               <input value={username} placeholder="Username" onChange={(ev) => setUsername(ev.target.value)} className={cx("inputBox")} />
-              <label className={cx("errorLabel")}>{errorName}</label>
             </div>
             <div className={cx("registerField")}>
               <input value={email} placeholder="Email" onChange={(ev) => setEmail(ev.target.value)} className={cx("inputBox")} />
-              <label className={cx("errorLabel")}>{errorName}</label>
             </div>
             <div className={cx("registerField")}>
               <input value={phone} placeholder="Số điện thoại" onChange={(ev) => setPhoneNumber(ev.target.value)} className={cx("inputBox")} />
-              <label className={cx("errorLabel")}>{errorName}</label>
             </div>
             <div className={cx("registerField")}>
               <input value={password} type="password" placeholder="Mật khẩu" onChange={(ev) => setPassword(ev.target.value)} className={cx("inputBox")} />
-              <label className={cx("errorLabel")}>{errorName}</label>
             </div>
             <div className={cx("registerField")}>
               <input value={confirmPassword} type="password" placeholder="Nhập lại mật khẩu" onChange={(ev) => setConfirmPassword(ev.target.value)} className={cx("inputBox")} />
-              <label className={cx("errorLabel")}>{errorName}</label>
             </div>
           </div>
           <div className={cx("inputContainer")}>
