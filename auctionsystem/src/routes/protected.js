@@ -5,14 +5,13 @@ import CustomerLayout from "~/components/Layout/Customer";
     if (
       role == 1 &&
       (path == "/admin" ||
-        path == "/approve" ||
-        path == "/upload")
+        path == "/approve")
     )
       return children;
     else if (
       role == 0 &&
       (path == "/customer" ||
-        path == "/payment" ||
+        path == "/payment" || path == "/upload" ||
       path == "/detail/:itemId")
     )
       return children;
