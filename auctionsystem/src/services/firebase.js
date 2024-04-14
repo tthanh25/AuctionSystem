@@ -1,7 +1,7 @@
 // services/FirebaseService.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, runTransaction } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, collection, getDocs, query, runTransaction } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 import firebaseConfig from "./config";
@@ -22,26 +22,33 @@ class FirebaseService {
   }
 
   // Authentication Services
-  createAccount(email, password) {
+  async createAccount(email, password) {
     return createUserWithEmailAndPassword(this.auth, email, password);
   }
 
-  signIn(email, password) {
+  async signIn(email, password) {
     return signInWithEmailAndPassword(this.auth, email, password);
   }
 
-  // Get current user ID
-  getCurrentUserId() {
-    onAuthStateChanged(this.auth, (user) => {
-      if (user) {
-        console.log(user)
-        return user.uid;
-      }
-    });
-    return null;
+  async signOut() {
+    try {
+      await signOut(this.auth);
+    } catch (error) {
+      console.error("Error signing out:", error);
+      throw error;
+    }
   }
 
   // Firestore Services
+  async getCurrentUser() {
+    const user = this.auth.currentUser;
+    if(user) {
+      return user.uid;
+    } else {
+      return null;
+    }
+  }
+
   async getUserData(uid) {
     const userData = await getDoc(doc(this.db, "users", uid));
     return userData.exists() ? userData.data() : null;
@@ -49,6 +56,30 @@ class FirebaseService {
 
   async setUserDocument(uid, data) {
     return await setDoc(doc(this.db, "users", uid), data);
+  }
+
+  async getAllUsers() {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, "users"));
+      const users = [];
+      querySnapshot.forEach((doc) => {
+        users.push({ id: doc.id, ...doc.data() });
+      });
+      return users;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw error;
+    }
+  }
+
+  async deleteUser(uid) {
+    try {
+      await deleteDoc(doc(this.db, "users", uid));
+      return true; // Deletion successful
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      throw error;
+    }
   }
 
   async getItems() {
@@ -96,10 +127,39 @@ class FirebaseService {
     }
   }
 
-  // Storage Services
   async getDownloadUrl(storagePath) {
     const fileRef = ref(this.storage, storagePath);
     return getDownloadURL(fileRef);
+  }
+
+  async deleteItem(itemId) {
+    try {
+      await deleteDoc(doc(this.db, "items", itemId));
+      return true; // Deletion successful
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      throw error;
+    }
+  }
+
+  async addItem(itemData) {
+    try {
+      const newItemRef = await addDoc(collection(this.db, "items"), itemData);
+      return newItemRef.id; // Return the ID of the newly added item
+    } catch (error) {
+      console.error("Error adding item:", error);
+      throw error;
+    }
+  }
+
+  async updateItem(itemId, newData) {
+    try {
+      await setDoc(doc(this.db, "items", itemId), newData, { merge: true });
+      return true; // Update successful
+    } catch (error) {
+      console.error("Error updating item:", error);
+      throw error;
+    }
   }
 
   // Auciton Services

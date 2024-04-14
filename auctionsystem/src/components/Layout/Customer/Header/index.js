@@ -1,22 +1,32 @@
+import React from "react";
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
-// import logo from "~/assets/logo-1@2x - Copy.png";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { blue } from "@mui/material/colors";
+import firebaseService from "~/services/firebase";
 
 const cx = classNames.bind(styles);
 
 function Header() {
   const navigate = useNavigate();
   const name = localStorage.getItem("username");
+
+  const handleSignOut = async () => {
+    try {
+      await firebaseService.signOut();
+      localStorage.clear();
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      // Handle error if needed
+    }
+  };
+
   return (
     <header className={cx("wrapper")} style={{ background: "#01579b" }}>
       <nav className={cx("inner-header")}>
         <ul>
-          {/* <li className={cx("logo")}>
-            <img src={logo} alt="MagicPost" />
-          </li> */}
           <li className={cx("name")}>
             <p>Xin chào: {name}</p>
           </li>
@@ -34,14 +44,10 @@ function Header() {
                 color: "white",
               },
             }}
-            onClick={() => {
-              localStorage.clear();
-              navigate("/");
-            }}
+            onClick={handleSignOut}
           >
             Đăng xuất
           </Button>
-        
         </ul>
       </nav>
     </header>
