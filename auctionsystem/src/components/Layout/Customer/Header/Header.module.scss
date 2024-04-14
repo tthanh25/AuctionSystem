@@ -17,7 +17,7 @@
     display: flex;
     height: var(--default-layout-header-height);
     align-items: stretch;
-    justify-content: end;
+    justify-content: flex-end;
     width: var(--default-layout-header-width + 400);
   }
   

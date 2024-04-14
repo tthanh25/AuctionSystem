@@ -79,8 +79,8 @@ const Login = () => {
       setPasswordError("Hãy nhập mật khẩu!");
       return;
     }
-    if (password.length < 5) {
-      setPasswordError("Mật khẩu phải từ 5 kí tự trở lên!");
+    if (password.length < 6) {
+      setPasswordError("Mật khẩu phải từ 6 kí tự trở lên!");
       return;
     }
     logIn();

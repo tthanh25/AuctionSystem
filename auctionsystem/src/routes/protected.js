@@ -1,30 +1,21 @@
 import AdminLayout from "~/components/Layout/Admin";
 import CustomerLayout from "~/components/Layout/Customer";
 
-function Protected({ role, path, children,isLogged }) {
-    if (path == "/" || path == "/login" || path == "/register" || path == "/payment" || path == "/detail/:itemId") return (children)
-    if (isLogged && path == "/detail/:itemId" && role == 1)  { return (
-      {children}
-      )
-      }
-    if (isLogged && path == "/detail/:itemId" && role == 0)  { return (
-      {children}
-    )
-      }
-    if ( 
+  function Protected({ role, path, children }) {
+    if (
       role == 1 &&
       (path == "/admin" ||
-        path == "/manage" 
-        )
+        path == "/approve" ||
+        path == "/upload")
     )
-     { return (children)
-
-      }
+      return children;
     else if (
-      role == 0 && (path == "/customer")
+      role == 0 &&
+      (path == "/customer" ||
+        path == "/payment" ||
+      path == "/detail/:itemId")
     )
-      {return (children)
-      ;}
+      return children;
     else return <h1>Bạn không có quyền truy cập</h1>;
   }
   
