@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import classNames from "classnames/bind";
@@ -23,39 +23,41 @@ const Login = () => {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [errorName, setErrorName] = useState("");
+  const [role, setRole] = useState();
   const navigate = useNavigate();
-  const setLogged = useContext(LayoutContext);
-  const setRole = useContext(getRole);
   useEffect(() => {
     if (chora) {
       setTimeout(() => {
         setChora(false);
+        
+        console.log("1:",role)
       }, 1500);
       setTimeout(() => {
-        navigate(loggedIn && loggedIn.role === "1" ? `/admin` : `/customer`);
+        navigate(role == "1" ? `/admin` : `/customer`);
       }, 2000);
     }
   }, [loggedIn]);
 
   const logIn = async () => {
     try {
-      setRole(0);
-      setLogged(false);
       const userCredential = await firebaseService.signIn(username, password);
       setErrorName("");
       const user = userCredential.user;
-      setLoggedIn(true);
-      setLogged(true);
-      setChora(true);
-      localStorage.setItem("isLogged", true);
 
       // Retrieve additional user data from Firestore if needed
       const userData = await firebaseService.getUserData(user.uid);
-      setRole(userData.role);
       if (userData) {
         localStorage.setItem("username", userData.name);
         localStorage.setItem("role", userData.role);
         localStorage.setItem("uid", user.uid);
+        console.log(userData.role)
+        setRole(userData.role);
+        
+        console.log("2: ",role);
+        setLoggedIn(true);
+        setChora(true);
+        localStorage.setItem("isLogged", true);
+        
       } else {
         console.log("No such data of user");
       }
@@ -67,7 +69,7 @@ const Login = () => {
     }
   };
 
-  const onButtonClick = () => {
+  const onButtonClick = async () => {
     setUsernameError("");
     setPasswordError("");
     setErrorName("");
@@ -83,7 +85,7 @@ const Login = () => {
       setPasswordError("Mật khẩu phải từ 6 kí tự trở lên!");
       return;
     }
-    logIn();
+    await logIn();
   };
 
   return (
@@ -123,8 +125,8 @@ const Login = () => {
                   color: "white",
                 },
               }}
-              onClick={() => {
-                onButtonClick();
+              onClick={async () => {
+                await onButtonClick();
               }}
             >
               Đăng nhập

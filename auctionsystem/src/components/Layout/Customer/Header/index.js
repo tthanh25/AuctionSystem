@@ -27,6 +27,44 @@ function Header() {
     <header className={cx("wrapper")} style={{ background: "#01579b" }}>
       <nav className={cx("inner-header")}>
         <ul>
+        <Button
+            size="medium"
+            disableFocusRipple
+            disableRipple
+            component="li"
+            sx={{
+              display:"flex",
+              flexDirection:"flex-start",
+              alignItems: "flex-start",
+              color: "white",
+              "&:hover": {
+                backgroundColor: blue[500],
+                color: "white",
+              },
+            }}
+            onClick={() => {navigate("/customer")}} 
+          >
+            Trang chủ
+          </Button>
+        <Button
+            size="medium"
+            disableFocusRipple
+            disableRipple
+            component="li"
+            sx={{
+              display:"flex",
+              flexDirection:"flex-start",
+              alignItems: "flex-start",
+              color: "white",
+              "&:hover": {
+                backgroundColor: blue[500],
+                color: "white",
+              },
+            }}
+            onClick={() => {navigate("/customer")}} 
+          >
+            Đơn đã đấu giá
+          </Button>
           <li className={cx("name")}>
             <p>Xin chào: {name}</p>
           </li>
@@ -37,6 +75,8 @@ function Header() {
             component="li"
             className={cx("login")}
             sx={{
+              position:"fixed",
+              right:"16px",
               alignItems: "flex-end",
               color: "white",
               "&:hover": {

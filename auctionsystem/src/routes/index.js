@@ -6,7 +6,7 @@ import Login from '~/pages/Login'
 import Register from '~/pages/Register'
 import Detail from '~/pages/Detail'
 import Upload from '~/pages/Upload'
-import Approve from '~/pages/Approve'
+import Manage from '~/pages/Manage'
 const publicRoutes = [
     {path: '/', component : Home  },
     {path: '/login', component : Login},
@@ -16,13 +16,13 @@ const publicRoutes = [
 ]
 
 const privateRoutes = [
-    {path: '/upload', component : Upload, layout: CustomerLayout},
+    {path: '/upload', component : Upload, layout: AdminLayout},
+    {path: '/manage', component : Manage, layout: AdminLayout},
     {path: '/', component : Home , layout: HeaderOnly },
     {path: '/admin', component : Home, layout: AdminLayout},
     {path: '/customer', component : Home, layout: CustomerLayout},
     {path: '/payment', component : Home, layout: CustomerLayout},
-    {path: '/detail/:itemId', component: Detail, CustomerLayout},
-    {path: '/approve', component : Approve, layout: AdminLayout},
+    {path: '/customer/detail/:itemId', component: Detail, CustomerLayout},
 ]
 
 export {

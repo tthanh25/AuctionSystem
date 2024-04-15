@@ -6,6 +6,7 @@ import firebaseService from "~/services/firebase";
 import { useParams } from "react-router-dom";
 import InputFileUpload from "./InputFileUpload";
 import TextareaAutosize from '@mui/material/TextareaAutosize';
+import { blue, orange } from "@mui/material/colors";
 
 const cx = classNames.bind(styles);
 
@@ -34,10 +35,12 @@ function Detail() {
   const handleCloseNotification = () => {
     setNotification({ message: "", severity: "success" });
   };
-
+ const handleToUpload = () => {
+  
+ }
 
   return (
-    <div style={{ marginTop: "99px", marginBottom: "99px" }}>
+    <div style={{ marginBottom: "99px" }}>
       <Paper className={cx("paper")} elevation={3}>
         <div className={cx("content")}>
           <h2 className={cx("name")}>
@@ -83,6 +86,7 @@ function Detail() {
             />
           </div>
           <img src={item.imageUrl} alt={item.name} style={{ height: "450px" }}></img>
+          <InputFileUpload item= {item} setItem ={setItem} />
           <Divider style={{ margin: "16px" }} />
           <div className={cx("payment")}>
           <label
@@ -130,7 +134,26 @@ function Detail() {
               }}
             />
           </div>
-          <InputFileUpload item= {item} setItem ={setItem} />
+          
+          <Button
+              size="Large"
+              disableFocusRipple
+              disableRipple
+              sx={{
+                alignItems: "flex-end",
+                color: "white",
+                backgroundColor: "#ff6d00",
+                "&:hover": {
+                  backgroundColor: orange[900],
+                  color: "white",
+                },
+              }}
+              onClick={() => {
+                handleToUpload();
+              }}
+            >
+              Tải lên
+            </Button>
           {notification.message && (
             <Alert severity={notification.severity} onClose={handleCloseNotification}>
               {notification.message}

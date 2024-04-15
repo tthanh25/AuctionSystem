@@ -12,12 +12,12 @@
 }
 
 .inner-header ul {
-  margin: 0;
+  margin-left: 32px;
   padding: 0;
   display: flex;
   height: var(--default-layout-header-height);
   align-items: stretch;
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: var(--default-layout-header-width + 400);
 }
 
@@ -28,5 +28,6 @@
 }
 
 .name {
+  padding-left: 650px;
   padding-right: 100px;
 }

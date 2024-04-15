@@ -10,6 +10,7 @@ const cx = classNames.bind(styles);
 
 function Header() {
   const navigate = useNavigate();
+  const name = localStorage.getItem("username");
 
   const handleSignOut = async () => {
     try {
@@ -26,8 +27,65 @@ function Header() {
     <header className={cx("wrapper")} style={{ background: "#01579b" }}>
       <nav className={cx("inner-header")}>
         <ul>
+        <Button
+            size="medium"
+            disableFocusRipple
+            disableRipple
+            component="li"
+            sx={{
+              display:"flex",
+              flexDirection:"flex-start",
+              alignItems: "flex-start",
+              color: "white",
+              "&:hover": {
+                backgroundColor: blue[500],
+                color: "white",
+              },
+            }}
+            onClick={() => {navigate("/admin")}} 
+          >
+            Trang chủ
+          </Button>
+        <Button
+            size="medium"
+            disableFocusRipple
+            disableRipple
+            component="li"
+            sx={{
+              display:"flex",
+              flexDirection:"flex-start",
+              alignItems: "flex-start",
+              color: "white",
+              "&:hover": {
+                backgroundColor: blue[500],
+                color: "white",
+              },
+            }}
+            onClick={() => {navigate("/manage")}} 
+          >
+            Quản lí
+          </Button>
+        <Button
+            size="medium"
+            disableFocusRipple
+            disableRipple
+            component="li"
+            sx={{
+              display:"flex",
+              flexDirection:"flex-start",
+              alignItems: "flex-start",
+              color: "white",
+              "&:hover": {
+                backgroundColor: blue[500],
+                color: "white",
+              },
+            }}
+            onClick={() => {navigate("/upload")}} 
+          >
+            Thêm đấu giá
+          </Button>
           <li className={cx("name")}>
-            <p>Xin chào admin: </p>
+            <p>Xin chào admin: {name}</p>
           </li>
           <Button
             size="medium"
@@ -36,6 +94,8 @@ function Header() {
             component="li"
             className={cx("login")}
             sx={{
+              position:"fixed",
+              right:"16px",
               alignItems: "flex-end",
               color: "white",
               "&:hover": {

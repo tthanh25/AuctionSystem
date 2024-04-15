@@ -1,5 +1,7 @@
 .paper {
-    margin: 100px;
+    margin: 48px;
+    margin-left: 100px;
+    margin-right: 100px;
 }
 .content {
     margin: 32px;
@@ -9,7 +11,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-content: flex-start;
-    margin-left: 24px;
+    margin: 24px;
 }
 .description {
     display: flex;
