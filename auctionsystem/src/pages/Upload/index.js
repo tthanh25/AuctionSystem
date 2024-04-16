@@ -40,7 +40,7 @@ function Detail() {
  }
 
   return (
-    <div style={{ marginBottom: "99px" }}>
+    <div style={{ marginBottom: "99px", marginTop:"99px" }}>
       <Paper className={cx("paper")} elevation={3}>
         <div className={cx("content")}>
           <h2 className={cx("name")}>

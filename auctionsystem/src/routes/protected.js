@@ -8,10 +8,11 @@ import CustomerLayout from "~/components/Layout/Customer";
     if(localStorage.getItem("role")) role = localStorage.getItem("role") ;
     if  (path == '/' || path =='/login' || path == '/register') return children 
     if (isLogged)
-    {if (
+    {if ( isLogged &&
       role == 1 &&
       (path == "/admin" ||
-        path == "/upload" || path == "/manage")
+        path == "/upload" || path == "/manage" ||
+        path == "/detail/:itemId")
     )
       return children;
    } 

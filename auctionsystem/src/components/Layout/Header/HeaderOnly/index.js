@@ -22,10 +22,31 @@ function Header() {
             disableFocusRipple
             disableRipple
             component="li"
+            sx={{
+              display:"flex",
+              flexDirection:"flex-start",
+              alignItems: "flex-start",
+              color: "white",
+              "&:hover": {
+                backgroundColor: blue[500],
+                color: "white",
+              },
+            }}
+            onClick={() => {navigate("/")}} 
+          >
+            Trang chủ
+          </Button>
+          <Button
+            size="medium"
+            disableFocusRipple
+            disableRipple
+            component="li"
             className={cx("login")}
             sx={{
+              position:"fixed",
+              right:"16px",
               alignItems: "flex-end",
-              color: "white",
+                color: "white",
               "&:hover": {
                 backgroundColor: blue[500],
                 color: "white",
