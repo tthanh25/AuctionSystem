@@ -21,7 +21,7 @@ function App() {
                 const Page = route.component
                 if(route.layout) Layout = route.layout
                 return <Route key={index} path={route.path} element={
-                  <Protected role={role } path={route.path}><Layout><Page/></Layout></Protected>
+                  <Protected role={role } path={route.path}><Page/></Protected>
                 } />
               })
             }
@@ -30,7 +30,7 @@ function App() {
                 const Page = route.component
                 Layout = route.layout
                 return <Route key={index} path={route.path} element={
-                  <Protected role={role } path={route.path}><Layout><Page/></Layout></Protected>
+                  <Protected role={role } path={route.path}><Page/></Protected>
                 } />
               })
             }

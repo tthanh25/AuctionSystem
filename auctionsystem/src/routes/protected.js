@@ -1,12 +1,13 @@
 import AdminLayout from "~/components/Layout/Admin";
 import CustomerLayout from "~/components/Layout/Customer";
+import HeaderOnly from "~/components/Layout/Header";
 
   function Protected({ path, children }) {
     let isLogged = false;
     if(localStorage.getItem("isLogged")) isLogged = true ;
     let role = 3;
     if(localStorage.getItem("role")) role = localStorage.getItem("role") ;
-    if  (path == '/' || path =='/login' || path == '/register') return children 
+    if  (path == '/' || path =='/login' || path == '/register') return (<HeaderOnly>{children}</HeaderOnly>) 
     if (isLogged)
     {if ( isLogged &&
       role == 1 &&
@@ -14,7 +15,7 @@ import CustomerLayout from "~/components/Layout/Customer";
         path == "/upload" || path == "/manage" ||
         path == "/detail/:itemId")
     )
-      return children;
+    return (<AdminLayout>{children}</AdminLayout>);
    } 
    if ( isLogged &&
       role == 0 &&
@@ -22,8 +23,8 @@ import CustomerLayout from "~/components/Layout/Customer";
         path == "/payment" ||
       path == "/detail/:itemId")
     )
-      return children;
-    else if (!isLogged && path =="/detail/:itemId") return children
+      return (<CustomerLayout>{children}</CustomerLayout>);
+    else if (!isLogged && path =="/detail/:itemId") return (<HeaderOnly>{children}</HeaderOnly>) 
     
     return <h1>Bạn không có quyền truy cập</h1>;
   }
