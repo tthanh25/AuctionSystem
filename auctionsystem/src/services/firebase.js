@@ -65,6 +65,7 @@ class FirebaseService {
       querySnapshot.forEach((doc) => {
         users.push({ id: doc.id, ...doc.data() });
       });
+      console.log(users)
       return users;
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -90,10 +91,11 @@ class FirebaseService {
 
       for (const doc of querySnapshot.docs) {
         const itemData = doc.data();
-        const imageUrl = await this.getImageUrl(itemData.img); // Get image URL from Firebase Storage
+        // const imageUrl = await this.getImageUrl(itemData.img); // Get image URL from Firebase Storage
+        const imageUrl = ''
         items.push({ id: doc.id, ...itemData, imageUrl });
       }
-
+      console.log(items)
       return items;
     } catch (error) {
       console.error("Error fetching items:", error);
