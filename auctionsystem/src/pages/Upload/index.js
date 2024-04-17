@@ -6,7 +6,8 @@ import firebaseService from "~/services/firebase";
 import { useParams } from "react-router-dom";
 import InputFileUpload from "./InputFileUpload";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
-import { blue, orange } from "@mui/material/colors";
+import { orange } from "@mui/material/colors";
+import { Timestamp } from "firebase/firestore";
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +22,7 @@ function Detail() {
     name: "",
     description: "",
     imageUrl: "",
+    auctionEnd: Timestamp.now(),
     currentPrice: 0,
     priceIncrement: 0,
   });
@@ -38,8 +40,15 @@ function Detail() {
 
   const handleToUpload = async () => {
     try {
+      // Upload image to Firebase Storage and get the URL
+      const imageUrl = await firebaseService.uploadImage(item.imageUrl);
+
       // Add item to Firebase
-      const newItemId = await firebaseService.addItem(item);
+      await firebaseService.addItem({
+        ...item,
+        imageUrl: imageUrl,
+      });
+
       setNotification({ message: "Item uploaded successfully", severity: "success" });
     } catch (error) {
       console.error("Error adding item:", error);
@@ -152,7 +161,7 @@ function Detail() {
           </div>
 
           <Button
-            size="Large"
+            size="large"
             disableFocusRipple
             disableRipple
             sx={{
@@ -164,9 +173,7 @@ function Detail() {
                 color: "white",
               },
             }}
-            onClick={() => {
-              handleToUpload();
-            }}
+            onClick={handleToUpload}
           >
             Tải lên
           </Button>
