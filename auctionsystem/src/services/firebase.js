@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, collection, getDocs, query, runTransaction } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
 import firebaseConfig from "./config";
 
@@ -42,7 +42,7 @@ class FirebaseService {
   // Firestore Services
   async getCurrentUser() {
     const user = this.auth.currentUser;
-    if(user) {
+    if (user) {
       return user.uid;
     } else {
       return null;
@@ -65,7 +65,7 @@ class FirebaseService {
       querySnapshot.forEach((doc) => {
         users.push({ id: doc.id, ...doc.data() });
       });
-      console.log(users)
+      console.log(users);
       return users;
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -83,6 +83,41 @@ class FirebaseService {
     }
   }
 
+  //Image
+  async getImageUrl(imagePath) {
+    try {
+      const storageRef = ref(this.storage, imagePath);
+      return await getDownloadURL(storageRef);
+    } catch (error) {
+      console.error("Error fetching image URL:", error);
+      throw error;
+    }
+  }
+
+  async getDownloadUrl(storagePath) {
+    const fileRef = ref(this.storage, storagePath);
+    return getDownloadURL(fileRef);
+  }
+
+  async uploadImage(file) {
+    try {
+      // Create a storage reference
+      const storageRef = ref(this.storage, `images/${file.name}`);
+
+      // Upload file to the storage reference
+      await uploadBytes(storageRef, file);
+
+      // Get the download URL of the uploaded image
+      const downloadURL = await getDownloadURL(storageRef);
+
+      return downloadURL;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw error;
+    }
+  }
+
+  //Items
   async getItems() {
     try {
       const q = query(collection(this.db, "items"));
@@ -92,10 +127,9 @@ class FirebaseService {
       for (const doc of querySnapshot.docs) {
         const itemData = doc.data();
         // const imageUrl = await this.getImageUrl(itemData.img); // Get image URL from Firebase Storage
-        const imageUrl = ''
-        items.push({ id: doc.id, ...itemData, imageUrl });
+        items.push({ id: doc.id, ...itemData});
       }
-      console.log(items)
+      console.log(items);
       return items;
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -117,21 +151,6 @@ class FirebaseService {
       console.error("Error fetching item by ID:", error);
       throw error;
     }
-  }
-
-  async getImageUrl(imagePath) {
-    try {
-      const storageRef = ref(this.storage, imagePath);
-      return await getDownloadURL(storageRef);
-    } catch (error) {
-      console.error("Error fetching image URL:", error);
-      throw error;
-    }
-  }
-
-  async getDownloadUrl(storagePath) {
-    const fileRef = ref(this.storage, storagePath);
-    return getDownloadURL(fileRef);
   }
 
   async deleteItem(itemId) {
