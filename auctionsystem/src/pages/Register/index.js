@@ -10,6 +10,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import { blue } from "@mui/material/colors";
 
 import firebaseService from "~/services/firebase";
+import { Timestamp } from "firebase/firestore";
 
 const cx = classNames.bind(styles);
 
@@ -85,7 +86,9 @@ const Register = () => {
       await firebaseService.setUserDocument(uid, {
         name: name,
         username: username,
+        email: email,
         phone: phone,
+        created_at: Timestamp.now(),
         role: 0,
       });
 
