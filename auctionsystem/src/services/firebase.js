@@ -142,8 +142,8 @@ class FirebaseService {
       const itemDoc = await getDoc(doc(this.db, "items", itemId));
       if (itemDoc.exists()) {
         const itemData = itemDoc.data();
-        const imageUrl = await this.getImageUrl(itemData.img);
-        return { id: itemDoc.id, ...itemData, imageUrl };
+        // const imageUrl = await this.getImageUrl(itemData.img);
+        return { id: itemDoc.id, ...itemData};
       } else {
         throw new Error("Item not found");
       }
