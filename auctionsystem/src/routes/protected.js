@@ -13,7 +13,7 @@ import HeaderOnly from "~/components/Layout/Header";
       role == 1 &&
       (path == "/admin" ||
         path == "/upload" || path == "/manage" ||
-        path == "/detail/:itemId")
+        path == "/detail/:itemId" || path == "/update/:itemId")
     )
     return (<AdminLayout>{children}</AdminLayout>);
    } 

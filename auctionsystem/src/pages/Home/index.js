@@ -62,19 +62,21 @@ function Home() {
 
   return (
     <div style={{marginTop:"99px",marginBottom:"99px"}}>
-        <ImageList cols={3}>
+        <ImageList cols={5}>
           {itemData.map((item) => (
             <Button key={item.id} onClick={() => handleItemClick(item.id)}>
-              <Paper elevation={3} sx={{padding:"24px"}}>
-                <ImageListItem>
-                  <img src={item.imageUrl} alt={item.name} />
-                  <p>{item.name}</p>
-                  <Divider />
-                  <p>{item.currentPrice} $</p>
-                  <p>
-                    {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây còn lại
-                  </p>
-                  <Divider />
+              <Paper elevation={3} sx={{padding:"24px", width:"100%",height:"100%"}}>
+                <ImageListItem sx={{fontSize:"14px"}}>
+                  <div style={{height:"175px",alignContent:"center"}}><img src={item.imageUrl} alt={item.name} style={{maxWidth:"100%"}} /></div>
+                  <div style={{height:"100%"}}>
+                    <p style={{marginTop:"10px",marginBottom:"6px"}}>{item.name}</p>
+                    <Divider />
+                    <p>{item.currentPrice} $</p>
+                    <p>
+                      {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây 
+                    </p>
+                    <Divider />
+                  </div>
                 </ImageListItem>
               </Paper>
             </Button>

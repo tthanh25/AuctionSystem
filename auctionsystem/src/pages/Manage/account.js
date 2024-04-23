@@ -174,7 +174,7 @@ export default function ManageAccount() {
   const [orderBy, setOrderBy] = React.useState("username");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -302,7 +302,7 @@ export default function ManageAccount() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[20, 50, 100]}
           component="div"
           count={users.length}
           rowsPerPage={rowsPerPage}

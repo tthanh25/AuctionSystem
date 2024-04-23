@@ -180,7 +180,7 @@ export default function ManageOrder() {
   const [orderBy, setOrderBy] = React.useState("price");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const [items, setItems] = useState([]); // State for storing items
 
   useEffect(() => {
@@ -291,8 +291,8 @@ export default function ManageOrder() {
                     <TableCell component="th" id={labelId} scope="row" padding="none">
                       {row.name}
                     </TableCell>
-                    <TableCell align="right">{row.currentPrice}</TableCell>
-                    <TableCell align="right">{row.priceIncrement}</TableCell>
+                    <TableCell align="right">{row.currentPrice + ` $`} </TableCell>
+                    <TableCell align="right">{row.priceIncrement + ` $`} </TableCell>
                     <TableCell align="right">{new Date(row.auctionEnd * 1000).toLocaleString()}</TableCell>
                     <TableCell align="right">{row.status}</TableCell>
                   </TableRow>
@@ -311,7 +311,7 @@ export default function ManageOrder() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[20, 50, 100]}
           component="div"
           count={items.length}
           rowsPerPage={rowsPerPage}

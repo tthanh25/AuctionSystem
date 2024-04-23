@@ -7,6 +7,7 @@ import Register from '~/pages/Register'
 import Detail from '~/pages/Detail'
 import Upload from '~/pages/Upload'
 import Manage from '~/pages/Manage'
+import Update from '~/pages/Update'
 const publicRoutes = [
     {path: '/', component : Home  },
     {path: '/login', component : Login},
@@ -22,7 +23,7 @@ const privateRoutes = [
     {path: '/admin', component : Home, layout: AdminLayout},
     {path: '/customer', component : Home, layout: CustomerLayout},
     {path: '/payment', component : Home, layout: CustomerLayout},
-    {path: '/customer/detail/:itemId', component: Detail, CustomerLayout},
+    {path: '/update/:itemId', component: Update, layout: AdminLayout},
 ]
 
 export {

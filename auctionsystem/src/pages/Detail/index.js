@@ -82,6 +82,7 @@ function Detail() {
           <div className={cx("payment")}>
             <TextField
               fullWidth
+              type="number"
               label="Nhập mức đấu giá"
               id="outlined-start-adornment"
               sx={{ m: 1 }}
@@ -92,9 +93,9 @@ function Detail() {
               }}
             />
             <p>
-              Giá hiện tại: {item.currentPrice}$
+              Giá hiện tại: {item.currentPrice} $
               <br />
-              Mức chênh lệch đấu giá: {bidAmount - item.currentPrice}$
+              Mức chênh lệch đấu giá (Bước giá): {bidAmount - item.currentPrice} $
             </p>
           </div>
           <Button variant="contained" onClick={handleBidSubmit}>
