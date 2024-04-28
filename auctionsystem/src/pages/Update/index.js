@@ -64,18 +64,22 @@ function Update() {
       // Upload image to Firebase Storage and get the URL
       const imageUrl = await firebaseService.uploadImage(item.imageUrl);
 
-      // Add item to Firebase
-      await firebaseService.addItem({
-        ...item,
-        imageUrl: imageUrl,
-      });
+      const auctionStartTimestamp = Timestamp.fromDate(startDateTime.toDate());
+      const auctionEndTimestamp = Timestamp.fromDate(endDateTime.toDate());
 
-      setNotification({ message: "Item uploaded successfully", severity: "success" });
+      // Update the item data with the new image URL
+      const updatedItem = { ...item, imageUrl: imageUrl, auctionStart: auctionStartTimestamp, auctionEnd: auctionEndTimestamp };
+
+      // Update item in Firebase
+      await firebaseService.updateItem(itemId, updatedItem);
+
+      setNotification({ message: "Item updated successfully", severity: "success" });
     } catch (error) {
-      console.error("Error adding item:", error);
-      setNotification({ message: "Error uploading item", severity: "error" });
+      console.error("Error updating item:", error);
+      setNotification({ message: "Error updating item", severity: "error" });
     }
   };
+
 
   return (
     <div style={{ marginBottom: "99px", marginTop: "99px" }}>

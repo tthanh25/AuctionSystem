@@ -95,7 +95,7 @@ function Detail() {
             <p>
               Giá hiện tại: {item.currentPrice} $
               <br />
-              Mức chênh lệch đấu giá (Bước giá): {bidAmount - item.currentPrice} $
+              Mức chênh lệch đấu giá (Bước giá): {item.priceIncrement} $
             </p>
           </div>
           <Button variant="contained" onClick={handleBidSubmit}>

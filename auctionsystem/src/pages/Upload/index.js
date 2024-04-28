@@ -19,15 +19,14 @@ function Detail() {
   const { itemId } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [bidAmount, setBidAmount] = useState("");
   const [notification, setNotification] = useState({ message: "", severity: "success" });
-  const [priceIncrement, setPriceIncrement] = useState("");
-  const [startDateTime, setStartDateTime] = useState(dayjs('2024-04-17T15:30'));
-  const [endDateTime, setEndDateTime] = useState(dayjs('2024-04-17T15:30'));
+  const [startDateTime, setStartDateTime] = useState(dayjs(Timestamp.now()));
+  const [endDateTime, setEndDateTime] = useState(dayjs(Timestamp.now()));
   const [item, setItem] = useState({
     name: "",
     description: "",
     imageUrl: "",
+    auctionStart: Timestamp.now(),
     auctionEnd: Timestamp.now(),
     currentPrice: 0,
     priceIncrement: 0,
@@ -49,10 +48,15 @@ function Detail() {
       // Upload image to Firebase Storage and get the URL
       const imageUrl = await firebaseService.uploadImage(item.imageUrl);
 
+      const auctionStartTimestamp = Timestamp.fromDate(startDateTime.toDate());
+      const auctionEndTimestamp = Timestamp.fromDate(endDateTime.toDate());
+
       // Add item to Firebase
       await firebaseService.addItem({
         ...item,
         imageUrl: imageUrl,
+        auctionStart: auctionStartTimestamp,
+        auctionEnd: auctionEndTimestamp,
       });
 
       setNotification({ message: "Item uploaded successfully", severity: "success" });
@@ -180,11 +184,11 @@ function Detail() {
               <p>
                 <DateTimePicker sx={{ m: 1,mr: 12 }} label="Bắt đầu" 
                 value={startDateTime}
-                onChange={(e) => {setStartDateTime(e); console.log(startDateTime)}}
+                onChange={(e) => {setStartDateTime(e); console.log(startDateTime);handleInputChange(startDateTime, 'auctionStart');}}
                 /> 
                 <DateTimePicker sx={{ m: 1,ml: 12 }} label="Kết thúc " 
                 value={endDateTime}
-                onChange={(e) => {setEndDateTime(e); console.log(endDateTime)}}
+                onChange={(e) => {setEndDateTime(e); console.log(endDateTime);handleInputChange(endDateTime, 'auctionEnd');}}
                 />
               </p>
              </LocalizationProvider>
