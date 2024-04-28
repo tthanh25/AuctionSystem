@@ -16,14 +16,14 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 const cx = classNames.bind(styles);
 
 function Update() {
-  console.log("co chay update")
   const { itemId } = useParams();
+  const [oldImg, setOldImg] = useState(null);
   const [item, setItem] = useState({
     name: "",
     description: "",
     imageUrl: "",
-    auctionStart: Timestamp.now(),
-    auctionEnd: Timestamp.now(),
+    auctionStart: "",
+    auctionEnd: "",
     currentPrice: 0,
     priceIncrement: 0,
   });
@@ -32,6 +32,8 @@ function Update() {
       .getItemById(itemId)
       .then((itemData) => {
         setItem(itemData);
+        setOldImg(itemData.imageUrl);
+        console.log(oldImg);
         setLoading(false);
       })
       .catch((error) => {
@@ -68,7 +70,9 @@ function Update() {
       const auctionEndTimestamp = Timestamp.fromDate(endDateTime.toDate());
 
       // Update the item data with the new image URL
-      const updatedItem = { ...item, imageUrl: imageUrl, auctionStart: auctionStartTimestamp, auctionEnd: auctionEndTimestamp };
+      let updatedItem = { ...item, auctionStart: auctionStartTimestamp, auctionEnd: auctionEndTimestamp };
+
+      if (oldImg !== item.imageUrl) {updatedItem = { ...item, imageUrl: imageUrl, auctionStart: auctionStartTimestamp, auctionEnd: auctionEndTimestamp }}
 
       // Update item in Firebase
       await firebaseService.updateItem(itemId, updatedItem);

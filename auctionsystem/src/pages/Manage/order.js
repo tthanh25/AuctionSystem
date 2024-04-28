@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import firebaseService from "~/services/firebase"; // Update the path to your Firebase service
+import dayjs from "dayjs";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -267,7 +268,7 @@ export default function ManageOrder() {
               {visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
-
+                
                 return (
                   <TableRow
                     hover
@@ -293,7 +294,7 @@ export default function ManageOrder() {
                     </TableCell>
                     <TableCell align="right">{row.currentPrice + ` $`} </TableCell>
                     <TableCell align="right">{row.priceIncrement + ` $`} </TableCell>
-                    <TableCell align="right">{new Date(row.auctionEnd * 1000).toLocaleString()}</TableCell>
+                    <TableCell align="right">{dayjs(row.auctionEnd.seconds * 1000).format('DD/MM/YYYY, h:mm:ss A')}</TableCell>
                     <TableCell align="right">{row.status}</TableCell>
                   </TableRow>
                 );
