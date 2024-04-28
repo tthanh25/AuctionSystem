@@ -22,6 +22,7 @@ function Update() {
     name: "",
     description: "",
     imageUrl: "",
+    auctionStart: Timestamp.now(),
     auctionEnd: Timestamp.now(),
     currentPrice: 0,
     priceIncrement: 0,
@@ -58,7 +59,7 @@ function Update() {
     setNotification({ message: "", severity: "success" });
   };
 
-  const handleToUpload = async () => {
+  const handleToUpdate = async () => {
     try {
       // Upload image to Firebase Storage and get the URL
       const imageUrl = await firebaseService.uploadImage(item.imageUrl);
@@ -91,7 +92,7 @@ function Update() {
                 lineHeight: "48px",
               }}
             >
-              Nhập tên:
+              Tên:
             </label>
             <TextField
               fullWidth
@@ -115,7 +116,7 @@ function Update() {
                 lineHeight: "48px",
               }}
             >
-              Nhập mô tả:
+              Mô tả:
             </label>
             <TextField
               id="outlined-start-adornment"
@@ -141,7 +142,7 @@ function Update() {
                 lineHeight: "48px",
               }}
             >
-              Nhập mức giá:
+              Mức giá:
             </label>
             <TextField
               fullWidth
@@ -166,7 +167,7 @@ function Update() {
                 lineHeight: "48px",
               }}
             >
-              Nhập chênh lệch đấu giá:
+              Chênh lệch đấu giá:
             </label>
             <TextField
               fullWidth
@@ -193,7 +194,7 @@ function Update() {
                 lineHeight: "48px",
               }}
             >
-              Nhập thời gian đấu giá:
+              Thời gian đấu giá:
             </label>
               <p>
                 <DateTimePicker sx={{ m: 1,mr: 12 }} label="Bắt đầu" 
@@ -221,9 +222,9 @@ function Update() {
                 color: "white",
               },
             }}
-            onClick={handleToUpload}
+            onClick={handleToUpdate}
           >
-            Tải lên
+            Cập nhật
           </Button>
           {notification.message && (
             <Alert severity={notification.severity} onClose={handleCloseNotification}>

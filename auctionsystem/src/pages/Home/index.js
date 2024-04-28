@@ -25,7 +25,8 @@ function Home() {
   };
 
   const handleItemClick = (itemId) => {
-    navigate(`/detail/${itemId}`);
+    if(localStorage.getItem("role") == 1) navigate(`/update/${itemId}`) 
+    else navigate(`/detail/${itemId}`);
   };
 
 
