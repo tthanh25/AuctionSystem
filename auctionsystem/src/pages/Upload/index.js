@@ -48,15 +48,10 @@ function Detail() {
       // Upload image to Firebase Storage and get the URL
       const imageUrl = await firebaseService.uploadImage(item.imageUrl);
 
-      const auctionStartTimestamp = Timestamp.fromDate(startDateTime.toDate());
-      const auctionEndTimestamp = Timestamp.fromDate(endDateTime.toDate());
-
       // Add item to Firebase
       await firebaseService.addItem({
         ...item,
         imageUrl: imageUrl,
-        auctionStart: auctionStartTimestamp,
-        auctionEnd: auctionEndTimestamp,
       });
 
       setNotification({ message: "Item uploaded successfully", severity: "success" });
@@ -118,7 +113,7 @@ function Detail() {
           </div>
           <img src={item.imageUrl} style={{ height: "450px" }}></img>
           <InputFileUpload item={item} setItem={setItem} />
-          <Divider style={{ margin: "16px" }} />  
+          <Divider style={{ margin: "16px" }} />
           <div className={cx("payment")}>
             <label
               style={{
@@ -169,29 +164,35 @@ function Detail() {
               }}
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <label
-              style={{
-                marginTop:"12px",
-                fontSize: "18px",
-                paddingLeft: "24px",
-                fontWeight: "bold",
-                display: "flex",
-                lineHeight: "48px",
-              }}
-            >
-              Nhập thời gian đấu giá:
-            </label>
+              <label
+                style={{
+                  marginTop: "12px",
+                  fontSize: "18px",
+                  paddingLeft: "24px",
+                  fontWeight: "bold",
+                  display: "flex",
+                  lineHeight: "48px",
+                }}
+              >
+                Nhập thời gian đấu giá:
+              </label>
               <p>
-                <DateTimePicker sx={{ m: 1,mr: 12 }} label="Bắt đầu" 
-                value={startDateTime}
-                onChange={(e) => {setStartDateTime(e); console.log(startDateTime);handleInputChange(startDateTime, 'auctionStart');}}
-                /> 
-                <DateTimePicker sx={{ m: 1,ml: 12 }} label="Kết thúc " 
-                value={endDateTime}
-                onChange={(e) => {setEndDateTime(e); console.log(endDateTime);handleInputChange(endDateTime, 'auctionEnd');}}
+                <DateTimePicker
+                  sx={{ m: 1, mr: 12 }}
+                  label="Bắt đầu"
+                  value={dayjs(item.auctionStart.toDate())}
+                  onChange={(date) => handleInputChange(Timestamp.fromDate(date.toDate()), "auctionStart")}
+                  renderInput={(props) => <TextField {...props} />}
+                />
+                <DateTimePicker
+                  sx={{ m: 1, ml: 12 }}
+                  label="Kết thúc"
+                  value={dayjs(item.auctionEnd.toDate())}
+                  onChange={(date) => handleInputChange(Timestamp.fromDate(date.toDate()), "auctionEnd")}
+                  renderInput={(props) => <TextField {...props} />}
                 />
               </p>
-             </LocalizationProvider>
+            </LocalizationProvider>
           </div>
 
           <Button

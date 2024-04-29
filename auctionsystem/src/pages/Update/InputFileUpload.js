@@ -19,15 +19,18 @@ const VisuallyHiddenInput = styled("input")({
 export default function InputFileUpload({ item, setItem }) {
   const [imagePreview, setImagePreview] = React.useState(null);
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = async (event) => {
+    // Make the function async
     const file = event.target.files[0];
     const reader = new FileReader();
 
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
+    reader.onloadend = async () => {
+      // Make the callback function async
+      // setImagePreview(reader.result);
+      const imageUrl = await firebaseService.uploadImage(file); // Await the asynchronous operation
       setItem({
         ...item,
-        imageUrl: file,
+        imageUrl: imageUrl,
       });
     };
 

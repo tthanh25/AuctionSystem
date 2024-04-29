@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import dayjs from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Button, Divider, InputAdornment, Paper, TextField, Alert } from "@mui/material";
 import styles from "./Update.module.scss";
 import classNames from "classnames/bind";
@@ -11,19 +11,18 @@ import InputFileUpload from "./InputFileUpload";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import { orange } from "@mui/material/colors";
 import { Timestamp } from "firebase/firestore";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
 const cx = classNames.bind(styles);
 
 function Update() {
   const { itemId } = useParams();
-  const [oldImg, setOldImg] = useState(null);
   const [item, setItem] = useState({
     name: "",
     description: "",
     imageUrl: "",
-    auctionStart: "",
-    auctionEnd: "",
+    auctionStart: Timestamp.now(),
+    auctionEnd: Timestamp.now(), 
     currentPrice: 0,
     priceIncrement: 0,
   });
@@ -32,8 +31,6 @@ function Update() {
       .getItemById(itemId)
       .then((itemData) => {
         setItem(itemData);
-        setOldImg(itemData.imageUrl);
-        console.log(oldImg);
         setLoading(false);
       })
       .catch((error) => {
@@ -43,12 +40,7 @@ function Update() {
   }, [itemId]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [bidAmount, setBidAmount] = useState("");
   const [notification, setNotification] = useState({ message: "", severity: "success" });
-  const [priceIncrement, setPriceIncrement] = useState("");
-  const [startDateTime, setStartDateTime] = useState(dayjs('2024-04-17T15:30'));
-  const [endDateTime, setEndDateTime] = useState(dayjs('2024-04-17T15:30'));
-  
 
   const handleInputChange = (value, name) => {
     setItem({
@@ -63,19 +55,8 @@ function Update() {
 
   const handleToUpdate = async () => {
     try {
-      // Upload image to Firebase Storage and get the URL
-      const imageUrl = await firebaseService.uploadImage(item.imageUrl);
-
-      const auctionStartTimestamp = Timestamp.fromDate(startDateTime.toDate());
-      const auctionEndTimestamp = Timestamp.fromDate(endDateTime.toDate());
-
-      // Update the item data with the new image URL
-      let updatedItem = { ...item, auctionStart: auctionStartTimestamp, auctionEnd: auctionEndTimestamp };
-
-      if (oldImg !== item.imageUrl) {updatedItem = { ...item, imageUrl: imageUrl, auctionStart: auctionStartTimestamp, auctionEnd: auctionEndTimestamp }}
-
       // Update item in Firebase
-      await firebaseService.updateItem(itemId, updatedItem);
+      await firebaseService.updateItem(itemId, item);
 
       setNotification({ message: "Item updated successfully", severity: "success" });
     } catch (error) {
@@ -83,7 +64,6 @@ function Update() {
       setNotification({ message: "Error updating item", severity: "error" });
     }
   };
-
 
   return (
     <div style={{ marginBottom: "99px", marginTop: "99px" }}>
@@ -139,7 +119,7 @@ function Update() {
           </div>
           <img src={item.imageUrl} style={{ height: "450px" }}></img>
           <InputFileUpload item={item} setItem={setItem} />
-          <Divider style={{ margin: "16px" }} />  
+          <Divider style={{ margin: "16px" }} />
           <div className={cx("payment")}>
             <label
               style={{
@@ -192,29 +172,35 @@ function Update() {
               }}
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <label
-              style={{
-                marginTop:"12px",
-                fontSize: "18px",
-                paddingLeft: "24px",
-                fontWeight: "bold",
-                display: "flex",
-                lineHeight: "48px",
-              }}
-            >
-              Thời gian đấu giá:
-            </label>
+              <label
+                style={{
+                  marginTop: "12px",
+                  fontSize: "18px",
+                  paddingLeft: "24px",
+                  fontWeight: "bold",
+                  display: "flex",
+                  lineHeight: "48px",
+                }}
+              >
+                Thời gian đấu giá:
+              </label>
               <p>
-                <DateTimePicker sx={{ m: 1,mr: 12 }} label="Bắt đầu" 
-                value={startDateTime}
-                onChange={(e) => {setStartDateTime(e); console.log(startDateTime)}}
-                /> 
-                <DateTimePicker sx={{ m: 1,ml: 12 }} label="Kết thúc " 
-                value={endDateTime}
-                onChange={(e) => {setEndDateTime(e); console.log(endDateTime)}}
+                <DateTimePicker
+                  sx={{ m: 1, mr: 12 }}
+                  label="Bắt đầu"
+                  value={dayjs(item.auctionStart.toDate())}
+                  onChange={(date) => handleInputChange(Timestamp.fromDate(date.toDate()), "auctionStart")}
+                  renderInput={(props) => <TextField {...props} />}
+                />
+                <DateTimePicker
+                  sx={{ m: 1, ml: 12 }}
+                  label="Kết thúc"
+                  value={dayjs(item.auctionEnd.toDate())}
+                  onChange={(date) => handleInputChange(Timestamp.fromDate(date.toDate()), "auctionEnd")}
+                  renderInput={(props) => <TextField {...props} />}
                 />
               </p>
-             </LocalizationProvider>
+            </LocalizationProvider>
           </div>
 
           <Button
