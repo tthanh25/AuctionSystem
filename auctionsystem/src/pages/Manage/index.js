@@ -15,7 +15,7 @@ function Manage() {
     setIsAccountTable(false);
   }
   return (  
-    <Paper sx={{marginTop:"99px", marginBottom:"99px"}}>
+    <Paper sx={{marginTop:"99px", marginBottom:"99px"}} elevation={0}>
       <Button
               size="Large"
               disableFocusRipple

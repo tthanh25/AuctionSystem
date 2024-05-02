@@ -69,13 +69,13 @@ const headCells = [
   },
   {
     id: "time",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
-    label: "Thời gian",
+    label: "Bắt đầu - Kết thúc",
   },
   {
     id: "status",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Trạng thái",
   },
@@ -102,8 +102,8 @@ function EnhancedTableHead(props) {
           />
         </TableCell>
         {headCells.map((headCell) => (
-          <TableCell key={headCell.id} align={headCell.numeric ? "right" : "left"} padding={headCell.disablePadding ? "none" : "normal"} sortDirection={orderBy === headCell.id ? order : false}>
-            <TableSortLabel active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : "asc"} onClick={createSortHandler(headCell.id)}>
+          <TableCell sx={{fontWeight:"Bold"}} key={headCell.id} align={headCell.numeric ? "right" : "left"} padding={headCell.disablePadding ? "none" : "normal"} sortDirection={orderBy === headCell.id ? order : false}>
+            <TableSortLabel sx={{display:"flex",justifyContent:"center"}} active={orderBy === headCell.id} direction={orderBy === headCell.id ? order : "asc"} onClick={createSortHandler(headCell.id)}>
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
@@ -183,19 +183,51 @@ export default function ManageOrder() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(20);
   const [items, setItems] = useState([]); // State for storing items
+  const [countdown, setCountdown] = useState(0);
+
 
   useEffect(() => {
-    // Fetch items from Firebase on component mount
-    async function fetchItems() {
+    const timer = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (countdown === 0) {
+      // Xử lý khi thời gian chạy ngược đạt 0
+      // Ví dụ: Hiển thị thông báo hoặc thực hiện một hành động
+      console.log('Countdown finished!');
+    }
+    const fetchItems = async () => {
       try {
-        const itemsData = await firebaseService.getItems();
-        setItems(itemsData);
+        const items = await firebaseService.getItems();
+        const itemsWithTimeLeft = calculateTimeLeft(items);
+        setItems(itemsWithTimeLeft);
       } catch (error) {
         console.error("Error fetching items:", error);
       }
-    }
+    };
+
     fetchItems();
-  }, []);
+  }, [countdown]);
+  const calculateTimeLeft = (items) => {
+    return items.map((item) => {
+      const auctionEndTime = item.auctionEnd.toMillis(); // Convert timestamp to milliseconds
+      const currentTime = Date.now(); // Get current time in milliseconds
+      const timeStart = currentTime - item.auctionStart.toMillis();
+      let timeDiff = Math.max(0, auctionEndTime - currentTime); // Ensure time difference is non-negative
+      const hoursLeft = Math.floor(timeDiff / (1000 * 60 * 60)); // Calculate remaining hours
+      timeDiff -= hoursLeft * (1000 * 60 * 60); // Subtract hours from time difference
+      const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Calculate remaining minutes
+      timeDiff -= minutesLeft * (1000 * 60); // Subtract minutes from time difference
+      const secondsLeft = Math.floor(timeDiff / 1000); // Calculate remaining seconds
+      return { ...item, timeLeft: { hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft },timeStartNow: timeStart };
+    });
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -289,13 +321,16 @@ export default function ManageOrder() {
                         }}
                       />
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                    <TableCell component="th" id={labelId} scope="row" padding="none" align="center"> 
                       {row.name}
                     </TableCell>
-                    <TableCell align="right">{row.currentPrice + ` $`} </TableCell>
-                    <TableCell align="right">{row.priceIncrement + ` $`} </TableCell>
-                    <TableCell align="right">{dayjs(row.auctionEnd.seconds * 1000).format('DD/MM/YYYY, h:mm:ss A')}</TableCell>
-                    <TableCell align="right">{row.status}</TableCell>
+                    <TableCell align="center">{row.currentPrice + ` $`} </TableCell>
+                    <TableCell align="center">{row.priceIncrement + ` $`} </TableCell>
+                    <TableCell align="center">{dayjs(row.auctionStart.seconds * 1000).format('DD/MM/YYYY, h:mm:ss A')} <br></br> {dayjs(row.auctionEnd.seconds * 1000).format('DD/MM/YYYY, h:mm:ss A')}</TableCell>
+                    <TableCell align="center">{(row.timeLeft.hours == 0 && row.timeLeft.minutes == 0 && row.timeLeft.seconds == 0)? 
+                    <p style={{alignContent:"center",color:"white", background:"#52b202", fontWeight:"bold", padding:"6px",borderRadius:"4px",height:"max-content",display:"flex",justifyContent:"center"}}>Kết thúc</p> 
+                    :(row.timeStartNow >= 0)?<p style={{color:"white",background:"#ff9800", fontWeight:"bold",padding:"6px",borderRadius:"4px",height:"max-content",display:"flex",justifyContent:"center"}}>Đang diễn ra </p> 
+                    : <p style={{color:"white", background:"#03a9f4", fontWeight:"bold",padding:"6px",borderRadius:"4px",height:"max-content",display:"flex",justifyContent:"center"}}>Chờ</p> }</TableCell>
                   </TableRow>
                 );
               })}
