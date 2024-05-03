@@ -62,11 +62,23 @@ const headCells = [
     label: "Giá hiện tại",
   },
   {
-    id: "priceIncrement",
+    id: "bidAmount",
     numeric: true,
     disablePadding: false,
-    label: "Bước giá",
+    label: "Giá đã đặt",
   },
+  {
+    id: "timestamp",
+    numeric: true,
+    disablePadding: false,
+    label: "Thời gian đặt",
+  },
+  // {
+  //   id: "priceIncrement",
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: "Bước giá",
+  // },
   {
     id: "auctionStart",
     numeric: true,
@@ -210,12 +222,36 @@ export default function ManageOrder() {
     }
     const fetchItems = async () => {
       try {
-        const transaction = await firebaseService.getItems();
-        const itemsWithTimeLeft = calculateTimeLeft(transaction);
+        const uid = localStorage.getItem("uid");
+        const items = await firebaseService.getBidHistory(uid);
+
+        // Extracting unique itemIds
+        const itemIds = [...new Set(items.map((item) => item.itemId))];
+        const itemDetailsMap = {};
+
+        // Fetching details for each itemId
+        for (const itemId of itemIds) {
+          const itemDetail = await firebaseService.getItemById(itemId);
+          itemDetailsMap[itemId] = itemDetail;
+        }
+
+        // console.log(items)
+
+        // Assigning item details to transactions
+        const transactions = items.map((item) => {
+          const { id: itemId, ...restItemDetails } = itemDetailsMap[item.itemId];
+          return {
+            ...item, // Spread the rest of the properties from `item`
+            ...restItemDetails, // Merge the item details
+          };
+        });
+        console.log(transactions)
+        const itemsWithTimeLeft = calculateTimeLeft(transactions);
         setTransaction(itemsWithTimeLeft);
       } catch (error) {
         console.error("Error fetching items:", error);
       }
+
     };
 
     fetchItems();
@@ -327,17 +363,41 @@ export default function ManageOrder() {
                         }}
                       />
                     </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none" align="center"> 
+                    <TableCell component="th" id={labelId} scope="row" padding="none" align="center">
                       {row.name}
                     </TableCell>
                     <TableCell align="center">{row.currentPrice + ` $`} </TableCell>
-                    <TableCell align="center">{row.priceIncrement + ` $`} </TableCell>
-                    <TableCell align="center">{dayjs(row.auctionStart.seconds * 1000).format('DD/MM/YYYY, h:mm:ss A')} </TableCell>
-                    <TableCell align="center">{dayjs(row.auctionEnd.seconds * 1000).format('DD/MM/YYYY, h:mm:ss A')} </TableCell>
-                    <TableCell align="center">{(row.timeLeft.hours == 0 && row.timeLeft.minutes == 0 && row.timeLeft.seconds == 0)? 
-                    <p style={{alignContent:"center",color:"white", background:"#52b202", fontWeight:"bold", padding:"6px",borderRadius:"4px",height:"max-content",display:"flex",justifyContent:"center"}}>Kết thúc</p> 
-                    :(row.timeStartNow >= 0)?<p style={{color:"white",background:"#ff9800", fontWeight:"bold",padding:"6px",borderRadius:"4px",height:"max-content",display:"flex",justifyContent:"center"}}>Đang diễn ra </p> 
-                    : <p style={{color:"white", background:"#03a9f4", fontWeight:"bold",padding:"6px",borderRadius:"4px",height:"max-content",display:"flex",justifyContent:"center"}}>Chờ</p> }</TableCell>
+                    <TableCell align="center">{row.bidAmount + ` $`} </TableCell>
+                    <TableCell align="center">{dayjs(row.timestamp.seconds * 1000).format("DD/MM/YYYY, h:mm:ss A")} </TableCell>
+                    <TableCell align="center">{dayjs(row.auctionStart.seconds * 1000).format("DD/MM/YYYY, h:mm:ss A")} </TableCell>
+                    <TableCell align="center">{dayjs(row.auctionEnd.seconds * 1000).format("DD/MM/YYYY, h:mm:ss A")} </TableCell>
+                    <TableCell align="center">
+                      {row.timeLeft.hours == 0 && row.timeLeft.minutes == 0 && row.timeLeft.seconds == 0 ? (
+                        <p
+                          style={{
+                            alignContent: "center",
+                            color: "white",
+                            background: "#52b202",
+                            fontWeight: "bold",
+                            padding: "6px",
+                            borderRadius: "4px",
+                            height: "max-content",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          Kết thúc
+                        </p>
+                      ) : row.timeStartNow >= 0 ? (
+                        <p style={{ color: "white", background: "#ff9800", fontWeight: "bold", padding: "6px", borderRadius: "4px", height: "max-content", display: "flex", justifyContent: "center" }}>
+                          Đang diễn ra{" "}
+                        </p>
+                      ) : (
+                        <p style={{ color: "white", background: "#03a9f4", fontWeight: "bold", padding: "6px", borderRadius: "4px", height: "max-content", display: "flex", justifyContent: "center" }}>
+                          Chờ
+                        </p>
+                      )}
+                    </TableCell>
                   </TableRow>
                 );
               })}

@@ -1,6 +1,6 @@
 // services/FirebaseService.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, collection, getDocs, query, runTransaction, Timestamp } from "firebase/firestore";
+import { where, orderBy, getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, collection, getDocs, query, runTransaction, Timestamp } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
@@ -132,7 +132,7 @@ class FirebaseService {
       console.log(items);
       return items;
     } catch (error) {
-      console.error("Error fetching items:", error);
+      console.error("Lỗi fetching:", error);
       throw error;
     }
   }
@@ -145,10 +145,10 @@ class FirebaseService {
         // const imageUrl = await this.getImageUrl(itemData.img);
         return { id: itemDoc.id, ...itemData };
       } else {
-        throw new Error("Item not found");
+        throw new Error("Không tìm thấy bé cún");
       }
     } catch (error) {
-      console.error("Error fetching item by ID:", error);
+      console.error("Lỗi tìm kiếm bằng ID:", error);
       throw error;
     }
   }
@@ -158,18 +158,18 @@ class FirebaseService {
       await deleteDoc(doc(this.db, "items", itemId));
       return true; // Deletion successful
     } catch (error) {
-      console.error("Error deleting item:", error);
+      console.error("Lỗi xóa:", error);
       throw error;
     }
   }
 
   async addItem(itemData) {
-    console.log(itemData)
+    console.log(itemData);
     try {
       const newItemRef = await addDoc(collection(this.db, "items"), itemData);
       return newItemRef.id; // Return the ID of the newly added item
     } catch (error) {
-      console.error("Error adding item:", error);
+      console.error("Lỗi thêm:", error);
       throw error;
     }
   }
@@ -179,7 +179,7 @@ class FirebaseService {
       await setDoc(doc(this.db, "items", itemId), newData, { merge: true });
       return true; // Update successful
     } catch (error) {
-      console.error("Error updating item:", error);
+      console.error("Lỗi cập nhật:", error);
       throw error;
     }
   }
@@ -193,16 +193,24 @@ class FirebaseService {
       await runTransaction(this.db, async (transaction) => {
         const itemDoc = await transaction.get(itemRef);
         if (!itemDoc.exists()) {
-          throw new Error("Item does not exist");
+          throw new Error("Không tồn tại bé cún");
         }
 
         const itemData = itemDoc.data();
-        if (bidAmount <= itemData.currentPrice) {
+        if (parseFloat(bidAmount) <= parseFloat(itemData.currentPrice)) {
           throw new Error("Giá đặt phải lớn hơn giá hiện tại");
         }
 
-        if (bidAmount - itemData.currentPrice <= itemData.priceIncrement) {
+        if (parseFloat(bidAmount) - parseFloat(itemData.currentPrice) < parseFloat(itemData.priceIncrement)) {
           throw new Error("Chênh lệch phải lớn hơn bước giá");
+        }
+
+        if (Timestamp.now() > itemData.auctionEnd) {
+          throw new Error("Hết thời gian đấu giá");
+        }
+
+        if (Timestamp.now() < itemData.auctionStart) {
+          throw new Error("Chưa bắt đầu thời gian đấu giá");
         }
 
         const bidData = {
@@ -226,39 +234,41 @@ class FirebaseService {
     }
   }
 
-  async getUserBidHistory(bidderId) {
+  async getBidHistory(userId) {
     try {
-      const bidRef = collection(this.db, "bids");
-      const querySnapshot = await getDocs(query(bidRef.where("bidderId", "==", bidderId).orderBy("timestamp", "desc")));
-
+      const q = query(collection(this.db, "bids"), where("bidderId", "==", userId));
+      const querySnapshot = await getDocs(q);
       const bidHistory = [];
-      querySnapshot.forEach((doc) => {
-        bidHistory.push(doc.data());
-      });
 
-      return bidHistory;
-    } catch (error) {
-      console.error("Error fetching user's bid history:", error);
-      throw error;
-    }
-  }
+      for (const doc of querySnapshot.docs) {
+        const bidData = doc.data();
+        bidHistory.push({ id: doc.id, ...bidData });
+      }
 
-  async getBidHistory(itemId) {
-    try {
-      const bidRef = collection(this.db, "bids");
-      const querySnapshot = await getDocs(query(bidRef.where("itemId", "==", itemId).orderBy("timestamp", "desc")));
-
-      const bidHistory = [];
-      querySnapshot.forEach((doc) => {
-        bidHistory.push(doc.data());
-      });
-
+      console.log(bidHistory);
       return bidHistory;
     } catch (error) {
       console.error("Error fetching bid history:", error);
       throw error;
     }
   }
+
+  // async getBidHistory(itemId) {
+  //   try {
+  //     const bidRef = query(this.db, "bids");
+  //     const querySnapshot = await getDocs(query(bidRef.where("itemId", "==", itemId).orderBy("timestamp", "desc")));
+
+  //     const bidHistory = [];
+  //     querySnapshot.forEach((doc) => {
+  //       bidHistory.push(doc.data());
+  //     });
+
+  //     return bidHistory;
+  //   } catch (error) {
+  //     console.error("Error fetching bid history:", error);
+  //     throw error;
+  //   }
+  // }
 
   // async getBidHistory(itemId, onUpdate) {
   //   try {
