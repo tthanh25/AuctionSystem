@@ -43,13 +43,13 @@ function Detail() {
 
       // Place the bid using the retrieved user ID
       await firebaseService.placeBid(itemId, userId, bidAmount);
-      setNotification({ message: "Bid placed successfully", severity: "success" });
+      setNotification({ message: "Đấu giá thành công", severity: "success" });
       // Optionally, you can fetch updated item data after placing the bid
       // const updatedItem = await firebaseService.getItemById(itemId);
       // setItem(updatedItem);
     } catch (error) {
       console.error("Error placing bid:", error);
-      setNotification({ message: error.message || "Failed to place bid", severity: "error" });
+      setNotification({ message: error.message || "Đấu giá thất bại", severity: "error" });
       // Handle error
     }
   };

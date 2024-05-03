@@ -61,7 +61,7 @@ function Header() {
                 color: "white",
               },
             }}
-            onClick={() => {navigate("/customer")}} 
+            onClick={() => {navigate("/transaction")}} 
           >
             Đơn đã đấu giá
           </Button>

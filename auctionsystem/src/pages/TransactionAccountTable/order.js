@@ -188,7 +188,7 @@ export default function ManageOrder() {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(20);
-  const [items, setItems] = useState([]); // State for storing items
+  const [transaction, setTransaction] = useState([]); // State for storing items
   const [countdown, setCountdown] = useState(0);
 
 
@@ -210,9 +210,9 @@ export default function ManageOrder() {
     }
     const fetchItems = async () => {
       try {
-        const items = await firebaseService.getItems();
-        const itemsWithTimeLeft = calculateTimeLeft(items);
-        setItems(itemsWithTimeLeft);
+        const transaction = await firebaseService.getItems();
+        const itemsWithTimeLeft = calculateTimeLeft(transaction);
+        setTransaction(itemsWithTimeLeft);
       } catch (error) {
         console.error("Error fetching items:", error);
       }
@@ -220,18 +220,18 @@ export default function ManageOrder() {
 
     fetchItems();
   }, [countdown]);
-  const calculateTimeLeft = (items) => {
-    return items.map((item) => {
-      const auctionEndTime = item.auctionEnd.toMillis(); // Convert timestamp to milliseconds
+  const calculateTimeLeft = (transaction) => {
+    return transaction.map((transaction) => {
+      const auctionEndTime = transaction.auctionEnd.toMillis(); // Convert timestamp to milliseconds
       const currentTime = Date.now(); // Get current time in milliseconds
-      const timeStart = currentTime - item.auctionStart.toMillis();
+      const timeStart = currentTime - transaction.auctionStart.toMillis();
       let timeDiff = Math.max(0, auctionEndTime - currentTime); // Ensure time difference is non-negative
       const hoursLeft = Math.floor(timeDiff / (1000 * 60 * 60)); // Calculate remaining hours
       timeDiff -= hoursLeft * (1000 * 60 * 60); // Subtract hours from time difference
       const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Calculate remaining minutes
       timeDiff -= minutesLeft * (1000 * 60); // Subtract minutes from time difference
       const secondsLeft = Math.floor(timeDiff / 1000); // Calculate remaining seconds
-      return { ...item, timeLeft: { hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft },timeStartNow: timeStart };
+      return { ...transaction, timeLeft: { hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft },timeStartNow: timeStart };
     });
   };
 
@@ -243,7 +243,7 @@ export default function ManageOrder() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = items.map((n) => n.id);
+      const newSelected = transaction.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -283,7 +283,7 @@ export default function ManageOrder() {
       for (const id of selected) {
         await firebaseService.deleteItem(id);
       }
-      setItems((prevItems) => prevItems.filter((item) => !selected.includes(item.id)));
+      setTransaction((prevItems) => prevItems.filter((transaction) => !selected.includes(transaction.id)));
       setSelected([]);
     } catch (error) {
       console.error("Error deleting items:", error);
@@ -291,9 +291,9 @@ export default function ManageOrder() {
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - items.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - transaction.length) : 0;
 
-  const visibleRows = React.useMemo(() => stableSort(items, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage), [items, order, orderBy, page, rowsPerPage]);
+  const visibleRows = React.useMemo(() => stableSort(transaction, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage), [transaction, order, orderBy, page, rowsPerPage]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -301,7 +301,7 @@ export default function ManageOrder() {
         <EnhancedTableToolbar numSelected={selected.length} onDelete={handleDeleteOrders} />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"medium"}>
-            <EnhancedTableHead numSelected={selected.length} order={order} orderBy={orderBy} onSelectAllClick={handleSelectAllClick} onRequestSort={handleRequestSort} rowCount={items.length} />
+            <EnhancedTableHead numSelected={selected.length} order={order} orderBy={orderBy} onSelectAllClick={handleSelectAllClick} onRequestSort={handleRequestSort} rowCount={transaction.length} />
             <TableBody>
               {visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.id);
@@ -356,7 +356,7 @@ export default function ManageOrder() {
         <TablePagination
           rowsPerPageOptions={[20, 50, 100]}
           component="div"
-          count={items.length}
+          count={transaction.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

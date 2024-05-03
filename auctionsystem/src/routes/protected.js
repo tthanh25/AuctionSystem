@@ -21,7 +21,7 @@ import HeaderOnly from "~/components/Layout/Header";
       role == 0 &&
       (path == "/customer" ||
         path == "/payment" ||
-      path == "/detail/:itemId")
+      path == "/detail/:itemId" || "/transaction")
     )
       return (<CustomerLayout>{children}</CustomerLayout>);
     else if (!isLogged && path =="/detail/:itemId") return (<HeaderOnly>{children}</HeaderOnly>) 
