@@ -21,7 +21,13 @@ function Home() {
       const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Calculate remaining minutes
       timeDiff -= minutesLeft * (1000 * 60); // Subtract minutes from time difference
       const secondsLeft = Math.floor(timeDiff / 1000); // Calculate remaining seconds
-      return { ...item, timeLeft: { hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft },timeStartNow: timeStart };
+      let timeToStart = Math.max(0,item.auctionStart.toMillis() - currentTime); // Ensure time difference is non-negative
+      const hoursToStart = Math.floor(timeToStart / (1000 * 60 * 60)); // Calculate remaining hours
+      timeToStart -= hoursToStart * (1000 * 60 * 60); // Subtract hours from time difference
+      const minutesToStart = Math.floor(timeToStart / (1000 * 60)); // Calculate remaining minutes
+      timeToStart -= minutesToStart * (1000 * 60); // Subtract minutes from time difference
+      const secondsToStart = Math.floor(timeToStart / 1000); // Calculate remaining seconds
+      return { ...item, timeLeft: { hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft }, timeStartAuction: { hours: hoursToStart, minutes: minutesToStart, seconds: secondsToStart },timeStartNow: timeStart };
     });
   };
 
@@ -75,15 +81,17 @@ function Home() {
                     <Divider />
                     <p>{item.currentPrice} $</p>
                     <Divider />
-                    {(item.timeLeft.hours == 0 && item.timeLeft.minutes == 0 && item.timeLeft.seconds == 0)? 
-                    <p style={{color:"#52b202", fontWeight:"bold", padding:"8px",borderRadius:"4px",width:"fit-content",height:"max-content",display:"flex",justifyContent:"center"}}>
-                      {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây </p> 
-                    :(item.timeStartNow >= 0)?
-                    <p style={{color:"#ff9800", fontWeight:"bold",padding:"8px",borderRadius:"4px",width:"fit-content",height:"max-content",display:"flex",justifyContent:"center"}}>
-                      {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây  </p> 
-                    : <p style={{color:"#03a9f4", fontWeight:"bold",padding:"8px",borderRadius:"4px",width:"fit-content",height:"max-content",display:"flex",justifyContent:"center"}}>
-                      {item.timeLeft.hours} giờ {item.timeLeft.minutes} phút {item.timeLeft.seconds} giây </p> 
-                      }
+                    <p>
+                      {(item.timeLeft.hours == 0 && item.timeLeft.minutes == 0 && item.timeLeft.seconds == 0)? 
+                      <p style={{color:"#52b202",minWidth:"100%", fontWeight:"bold", padding:"8px",borderRadius:"4px",width:"fit-content",height:"max-content",display:"flex",justifyContent:"center"}}>
+                       Đã kết thúc <br/> {item.timeLeft.hours} : {item.timeLeft.minutes} : {item.timeLeft.seconds}  </p> 
+                      :(item.timeStartNow >= 0)?
+                      <p style={{color:"#ff9800",minWidth:"100%", fontWeight:"bold",padding:"8px",borderRadius:"4px",width:"fit-content",height:"max-content",display:"flex",justifyContent:"center"}}>
+                       Đang diễn ra <br/> {item.timeLeft.hours} : {item.timeLeft.minutes} : {item.timeLeft.seconds}   </p> 
+                      : <p style={{color:"#03a9f4",minWidth:"100%", fontWeight:"bold",padding:"8px",borderRadius:"4px",width:"fit-content",height:"max-content",display:"flex",justifyContent:"center"}}>
+                        Bắt đầu sau <br/> {item.timeStartAuction.hours} : {item.timeStartAuction.minutes} : {item.timeStartAuction.seconds}  </p> 
+                        }
+                    </p>
                     <Divider />
                   </div>
                 </ImageListItem>

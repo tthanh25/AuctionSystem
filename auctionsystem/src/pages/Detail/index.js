@@ -4,6 +4,10 @@ import styles from "./Detail.module.scss";
 import classNames from "classnames/bind";
 import firebaseService from "~/services/firebase";
 import { useParams } from "react-router-dom";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import { Timestamp } from "firebase/firestore";
 const cx = classNames.bind(styles);
 
 function Detail() {
@@ -97,6 +101,34 @@ function Detail() {
               <br />
               Mức chênh lệch đấu giá (Bước giá): {item.priceIncrement} $
             </p>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <label
+                style={{
+                  marginTop: "12px",
+                  fontSize: "18px",
+                  paddingLeft: "24px",
+                  fontWeight: "bold",
+                  display: "flex",
+                  lineHeight: "48px",
+                }}
+              >
+                Thời gian đấu giá:
+              </label>
+              <p>
+                <DateTimePicker
+                  sx={{ m: 1, mr: 12 }}
+                  label="Bắt đầu"
+                  value={dayjs(item.auctionStart.toDate())}
+                  renderInput={(props) => <TextField {...props} />}
+                />
+                <DateTimePicker
+                  sx={{ m: 1, ml: 12 }}
+                  label="Kết thúc"
+                  value={dayjs(item.auctionEnd.toDate())}
+                  renderInput={(props) => <TextField {...props} />}
+                />
+              </p>
+            </LocalizationProvider>
           </div>
           <Button variant="contained" onClick={handleBidSubmit}>
             Xác nhận đấu giá
