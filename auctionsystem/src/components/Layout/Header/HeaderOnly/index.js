@@ -4,7 +4,7 @@ import styles from "./HeaderOnly.module.scss";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { blue } from "@mui/material/colors";
-
+import logo from "~/assets/logoDog.jpg"
 const cx = classNames.bind(styles);
 
 function Header() {
@@ -14,9 +14,22 @@ function Header() {
     <header className={cx("wrapper")} style={{ background: "#01579b" }}>
       <nav className={cx("inner-header")}>
         <ul>
-          {/* <li className={cx("logo")}>
-            <img src={logo} alt="MagicPost" />
-          </li> */}
+        <li
+            
+            style={{
+              maxWidth:"100%",maxHeight:"48px",
+              display:"flex",
+              flexDirection:"flex-start",
+              alignItems: "flex-start",
+              color: "white",
+              "&:hover": {
+                backgroundColor: blue[500],
+                color: "white",
+              },
+            }}
+          >
+            <img src={logo} alt={"Logo"} style={{maxWidth:"100%",maxHeight:"48px", borderRadius:"8px"}} />
+          </li>
           <Button
             size="medium"
             disableFocusRipple

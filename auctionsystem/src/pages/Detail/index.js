@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Divider, InputAdornment, Paper, TextField, Alert } from "@mui/material";
+import { Button, Divider, InputAdornment, Paper, TextField, Alert, Fade, AlertTitle } from "@mui/material";
 import styles from "./Detail.module.scss";
 import classNames from "classnames/bind";
 import firebaseService from "~/services/firebase";
@@ -134,9 +134,22 @@ function Detail() {
             Xác nhận đấu giá
           </Button>
           {notification.message && (
-            <Alert severity={notification.severity} onClose={handleCloseNotification}>
+            <Fade in = {notification.message} timeout={500}>
+            <Alert severity={notification.severity} onClose={handleCloseNotification}
+            variant="filled"
+            sx={{
+              position: "fixed",
+              fontSize: "1.0rem",
+              left: "48px",
+              bottom: "48px",
+              zIndex: 100,
+              width: "45%",
+            }}>
+          
+              <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>{notification.severity == "success" ? ("Thành công") : ("Lỗi")}</AlertTitle>
               {notification.message}
             </Alert>
+         </Fade>
           )}
         </div>
       </Paper>

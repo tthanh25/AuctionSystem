@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { Button, Divider, InputAdornment, Paper, TextField, Alert } from "@mui/material";
+import { Button, Divider, InputAdornment, Paper, TextField, Alert, Fade, AlertTitle } from "@mui/material";
 import styles from "./Upload.module.scss";
 import classNames from "classnames/bind";
 import firebaseService from "~/services/firebase";
@@ -44,6 +44,13 @@ function Detail() {
   };
 
   const handleToUpload = async () => {
+    setNotification({ message: "", severity: "success" });
+    for (let key in item) {
+      if (item[key] === "" || item[key] === null || item[key] < 0) {
+        setNotification({ message: "Giá trị không hợp lệ", severity: "error" });
+        return;
+      }
+    }
     try {
       // Upload image to Firebase Storage and get the URL
       const imageUrl = await firebaseService.uploadImage(item.imageUrl);
@@ -54,10 +61,10 @@ function Detail() {
         imageUrl: imageUrl,
       });
 
-      setNotification({ message: "Item uploaded successfully", severity: "success" });
+      setNotification({ message: "Thêm phiên đấu giá thành công", severity: "success" });
     } catch (error) {
       console.error("Error adding item:", error);
-      setNotification({ message: "Error uploading item", severity: "error" });
+      setNotification({ message: "Thêm phiên đấu giá thất bại", severity: "error" });
     }
   };
 
@@ -213,9 +220,22 @@ function Detail() {
             Tải lên
           </Button>
           {notification.message && (
-            <Alert severity={notification.severity} onClose={handleCloseNotification}>
+            <Fade in = {notification.message} timeout={500}>
+            <Alert severity={notification.severity} onClose={handleCloseNotification}
+            variant="filled"
+            sx={{
+              position: "fixed",
+              fontSize: "1.0rem",
+              left: "48px",
+              bottom: "48px",
+              zIndex: 100,
+              width: "45%",
+            }}>
+            
+              <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>{notification.severity == "success" ? ("Thành công") : ("Lỗi")}</AlertTitle>
               {notification.message}
             </Alert>
+         </Fade>
           )}
         </div>
       </Paper>

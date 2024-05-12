@@ -21,6 +21,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import firebaseService from "~/services/firebase"; // Update the path to your Firebase service
 import dayjs from "dayjs";
+import { Alert, AlertTitle, Fade } from "@mui/material";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -279,14 +280,17 @@ export default function ManageOrder() {
 
   const handleDeleteOrders = async () => {
     // Delete selected items from Firebase
+    
     try {
       for (const id of selected) {
         await firebaseService.deleteItem(id);
       }
       setItems((prevItems) => prevItems.filter((item) => !selected.includes(item.id)));
       setSelected([]);
+      setNotification({ message: "Xóa phiên đấu giá thành công", severity: "success" });
     } catch (error) {
       console.error("Error deleting items:", error);
+      setNotification({ message: "Xóa phiên đấu giá thất bại", severity: "error" });
     }
   };
 
@@ -294,6 +298,10 @@ export default function ManageOrder() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - items.length) : 0;
 
   const visibleRows = React.useMemo(() => stableSort(items, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage), [items, order, orderBy, page, rowsPerPage]);
+  const [notification, setNotification] = useState({ message: "", severity: "success" });
+  const handleCloseNotification = () => {
+    setNotification({ message: "", severity: "success" });
+  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -362,6 +370,24 @@ export default function ManageOrder() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        {notification.message && (
+            <Fade in = {notification.message} timeout={500}>
+            <Alert severity={notification.severity} onClose={handleCloseNotification}
+            variant="filled"
+            sx={{
+              position: "fixed",
+              fontSize: "1.0rem",
+              left: "48px",
+              bottom: "48px",
+              zIndex: 100,
+              width: "45%",
+            }}>
+            
+              <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>{notification.severity == "success" ? ("Thành công") : ("Lỗi")}</AlertTitle>
+              {notification.message}
+            </Alert>
+         </Fade>
+          )}
       </Paper>
     </Box>
   );

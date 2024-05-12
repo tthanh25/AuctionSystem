@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import firebaseService from "~/services/firebase";
+import { Alert, AlertTitle, Fade } from "@mui/material";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -238,8 +239,10 @@ export default function ManageAccount() {
       // Remove the deleted users from the local state
       setUsers(users.filter((user) => !selected.includes(user.id)));
       setSelected([]);
+      setNotification({ message: "Xóa tài khoản thành công", severity: "success" });
     } catch (error) {
       console.error("Error deleting users:", error);
+      setNotification({ message: "Xóa tài khoản thất bại", severity: "error" });
       // Handle error if needed
     }
   };
@@ -247,6 +250,10 @@ export default function ManageAccount() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
   const visibleRows = React.useMemo(() => stableSort(users, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage), [order, orderBy, page, rowsPerPage, users]);
+  const [notification, setNotification] = useState({ message: "", severity: "success" });
+  const handleCloseNotification = () => {
+    setNotification({ message: "", severity: "success" });
+  };
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -310,6 +317,24 @@ export default function ManageAccount() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        {notification.message && (
+            <Fade in = {notification.message} timeout={500}>
+            <Alert severity={notification.severity} onClose={handleCloseNotification}
+            variant="filled"
+            sx={{
+              position: "fixed",
+              fontSize: "1.0rem",
+              left: "48px",
+              bottom: "48px",
+              zIndex: 100,
+              width: "45%",
+            }}>
+            
+              <AlertTitle sx={{ fontSize: "1.2rem", fontWeight: "Bold" }}>{notification.severity == "success" ? ("Thành công") : ("Lỗi")}</AlertTitle>
+              {notification.message}
+            </Alert>
+         </Fade>
+          )}
       </Paper>
     </Box>
   );
