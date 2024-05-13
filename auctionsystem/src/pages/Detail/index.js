@@ -19,6 +19,9 @@ function Detail() {
   const [notification, setNotification] = useState({ message: "", severity: "success" });
 
   useEffect(() => {
+    fetch();
+  }, [itemId]);
+  const fetch = async () => {
     firebaseService
       .getItemById(itemId)
       .then((itemData) => {
@@ -29,13 +32,16 @@ function Detail() {
         setError(error.message);
         setLoading(false);
       });
-  }, [itemId]);
-
+  }
   const handleBidAmountChange = (event) => {
     setBidAmount(event.target.value);
   };
 
   const handleBidSubmit = async () => {
+    if (bidAmount == "" || bidAmount == null || bidAmount < 0) {
+      setNotification({message: "Giá trị không hợp lệ", severity:"error"})
+      return}
+    else
     try {
       // Retrieve user ID from local storage
       const userId = localStorage.getItem("uid");
@@ -51,6 +57,7 @@ function Detail() {
       // Optionally, you can fetch updated item data after placing the bid
       // const updatedItem = await firebaseService.getItemById(itemId);
       // setItem(updatedItem);
+      fetch();
     } catch (error) {
       console.error("Error placing bid:", error);
       setNotification({ message: error.message || "Đấu giá thất bại", severity: "error" });
@@ -118,12 +125,14 @@ function Detail() {
                 <DateTimePicker
                   sx={{ m: 1, mr: 12 }}
                   label="Bắt đầu"
+                  readOnly
                   value={dayjs(item.auctionStart.toDate())}
                   renderInput={(props) => <TextField {...props} />}
                 />
                 <DateTimePicker
                   sx={{ m: 1, ml: 12 }}
                   label="Kết thúc"
+                  readOnly
                   value={dayjs(item.auctionEnd.toDate())}
                   renderInput={(props) => <TextField {...props} />}
                 />
