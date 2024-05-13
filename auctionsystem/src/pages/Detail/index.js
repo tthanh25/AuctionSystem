@@ -87,7 +87,7 @@ function Detail() {
           <h2 className={cx("name")}>{item.name}</h2>
           <Divider style={{ margin: "16px" }} />
           <div className={cx("description")}>
-            <p>{item.description}</p>
+            <p style={{lineHeight:"56px"}}>{item.description}</p>
           </div>
           <img src={item.imageUrl} alt={item.name} style={{ height: "450px" }}></img>
           <Divider style={{ margin: "16px" }} />

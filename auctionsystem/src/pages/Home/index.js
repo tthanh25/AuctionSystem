@@ -75,7 +75,7 @@ function Home() {
             <Button key={item.id} onClick={() => handleItemClick(item.id)}>
               <Paper elevation={2} sx={{padding:"24px", width:"100%",height:"100%"}}>
                 <ImageListItem sx={{fontSize:"14px"}}>
-                  <div style={{height:"175px",alignContent:"center"}}><img src={item.imageUrl} alt={item.name} style={{maxWidth:"100%",maxHeight:"200px"}} /></div>
+                  <div style={{height:"175px",alignContent:"center"}}><img src={item.imageUrl} alt={item.name} style={{maxWidth:"100%",maxHeight:"180px"}} /></div>
                   <div style={{height:"100%"}}>
                     <p style={{marginTop:"10px",marginBottom:"6px",fontWeight:"bold"}}>{item.name}</p>
                     <Divider />
