@@ -34,7 +34,8 @@ function Detail() {
       });
   }
   const handleBidAmountChange = (event) => {
-    setBidAmount(event.target.value);
+    var number = parseInt(event.target.value, 10);
+    setBidAmount(number);
   };
 
   const handleBidSubmit = async () => {
