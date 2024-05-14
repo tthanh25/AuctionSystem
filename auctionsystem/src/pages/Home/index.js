@@ -48,13 +48,7 @@ function Home() {
       clearInterval(timer);
     };
   }, []);
-
   useEffect(() => {
-    if (countdown === 0) {
-      // Xử lý khi thời gian chạy ngược đạt 0
-      // Ví dụ: Hiển thị thông báo hoặc thực hiện một hành động
-      console.log('Countdown finished!');
-    }
     const fetchItems = async () => {
       try {
         const items = await firebaseService.getItems();
@@ -64,6 +58,23 @@ function Home() {
         console.error("Error fetching items:", error);
       }
     };
+
+    fetchItems();
+  },[])
+  useEffect(() => {
+    if (countdown === 0) {
+      // Xử lý khi thời gian chạy ngược đạt 0
+      // Ví dụ: Hiển thị thông báo hoặc thực hiện một hành động
+      console.log('Countdown finished!');
+    }
+    const fetchItems = async () => {
+      try {
+        const itemsWithTimeLeft = calculateTimeLeft(itemData);
+        setItemData(itemsWithTimeLeft);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    }; 
 
     fetchItems();
   }, [countdown]);
