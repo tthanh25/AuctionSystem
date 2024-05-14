@@ -100,7 +100,7 @@ const Login = () => {
           </div>
           <br />
           <div className={cx("inputContainer")}>
-            <input value={username} placeholder="Nhập username" onChange={(ev) => setUsername(ev.target.value)} className={cx("inputBox")} />
+            <input value={username} placeholder="Nhập Email" onChange={(ev) => setUsername(ev.target.value)} className={cx("inputBox")} />
             <label className={cx("errorLabel")}>{usernameError}</label>
           </div>
           <br />
