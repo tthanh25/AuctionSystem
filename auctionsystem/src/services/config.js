@@ -25,7 +25,7 @@ const firebaseConfig = {
   projectId: "auction-1c704",
   storageBucket: "auction-1c704.appspot.com",
   messagingSenderId: "882282679516",
-  appId: "1:882282679516:web:e4f21fb5632e53b2c5f819",
+  appId: "1:882282679516:web:e4f21fb5632e53b2c5f819"
 };
 
 export default firebaseConfig;
