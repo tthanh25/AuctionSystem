@@ -233,7 +233,15 @@ export default function ManageAccount() {
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const handleDeleteUsers = async () => {
+
+    
     try {
+      let role = JSON.parse(localStorage.getItem("role")); 
+      if (role != 1) {
+        setNotification({ message: "Bạn không có quyền", severity: "error" });
+        return;
+      }
+
       // Call the Firebase service to delete selected users
       await Promise.all(selected.map((id) => firebaseService.deleteUser(id)));
       // Remove the deleted users from the local state

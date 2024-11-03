@@ -138,6 +138,11 @@ function EnhancedTableToolbar(props) {
   const { numSelected, onDelete } = props;
 
   const handleDeleteClick = () => {
+    let role = JSON.parse(localStorage.getItem("role")); 
+    if (role != 1) {
+      // setNotification({ message: "Bạn không có quyền", severity: "error" });
+      return;
+    }
     onDelete();
   };
 

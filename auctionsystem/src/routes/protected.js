@@ -8,7 +8,7 @@ import HeaderOnly from "~/components/Layout/Header";
     let role = 3;
     if(localStorage.getItem("role")) role = localStorage.getItem("role") ;
     if  (path == '/' || path =='/login' || path == '/register') return (<HeaderOnly>{children}</HeaderOnly>) 
-    if (isLogged)
+
     {if ( isLogged &&
       role == 1 &&
       (path == "/admin" ||
@@ -17,14 +17,14 @@ import HeaderOnly from "~/components/Layout/Header";
     )
     return (<AdminLayout>{children}</AdminLayout>);
    } 
-   if ( isLogged &&
+   {if ( isLogged &&
       role == 0 &&
       (path == "/customer" ||
         path == "/payment" ||
       path == "/detail/:itemId" || "/transaction")
     )
-      return (<CustomerLayout>{children}</CustomerLayout>);
-    else if (!isLogged && path =="/detail/:itemId") return (<HeaderOnly>{children}</HeaderOnly>) 
+      return (<CustomerLayout>{children}</CustomerLayout>);}
+    if (!isLogged && path =="/detail/:itemId") return (<HeaderOnly>{children}</HeaderOnly>) 
     
     return <h1>Bạn không có quyền truy cập</h1>;
   }

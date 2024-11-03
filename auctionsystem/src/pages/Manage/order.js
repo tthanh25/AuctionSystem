@@ -282,6 +282,11 @@ export default function ManageOrder() {
     // Delete selected items from Firebase
     
     try {
+      let role = JSON.parse(localStorage.getItem("role")); 
+      if (role != 1) {
+        setNotification({ message: "Bạn không có quyền", severity: "error" });
+        return;
+      }
       for (const id of selected) {
         await firebaseService.deleteItem(id);
       }

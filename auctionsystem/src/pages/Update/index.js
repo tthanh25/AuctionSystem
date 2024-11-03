@@ -56,6 +56,11 @@ function Update() {
   };
 
   const handleToUpdate = async () => {
+    let role = JSON.parse(localStorage.getItem("role")); 
+    if (role != 1) {
+      setNotification({ message: "Bạn không có quyền", severity: "error" });
+      return;
+    }
     setNotification({ message: "", severity: "success" });
     for (let key in item) {
       if (item[key] === "" || item[key] === null || item[key] < 0) {

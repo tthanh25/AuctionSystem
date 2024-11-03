@@ -1,12 +1,8 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { privateRoutes, publicRoutes } from './routes';
-import { useEffect, useLayoutEffect, useState } from 'react';
 import Protected from './routes/protected';
-import { createContext } from 'react';
 import HeaderOnly from './components/Layout/Header';
-import AdminLayout from './components/Layout/Admin';
-import CustomerLayout from './components/Layout/Customer';
 
 function App() { 
   const role = JSON.parse(localStorage.getItem("role"));
