@@ -71,6 +71,13 @@ function Detail() {
       setNotification({ message: error.message || "Đấu giá thất bại", severity: "error" });
       // Handle error
     }
+
+    
+    if (notification.message) {
+      setTimeout(() => {
+        handleCloseNotification();
+      }, 4000);
+    }
   };
 
 
