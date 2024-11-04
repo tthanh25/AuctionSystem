@@ -253,6 +253,9 @@ export default function ManageAccount() {
       setNotification({ message: "Xóa tài khoản thất bại", severity: "error" });
       // Handle error if needed
     }
+    setTimeout(() => {
+      handleCloseNotification();
+    }, 4000);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;

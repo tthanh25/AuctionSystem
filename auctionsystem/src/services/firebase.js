@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { where, orderBy, getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, collection, getDocs, query, runTransaction, Timestamp } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import _ from 'lodash';
 
 import firebaseConfig from "./config";
 
@@ -189,7 +190,10 @@ class FirebaseService {
     try {
       const itemRef = doc(this.db, "items", itemId);
       const bidCollectionRef = collection(this.db, "bids");
-
+      const userRole = await this.getUserRole(); // Get current user's role
+      if (_.isEqual(userRole, 1)) {
+        throw new Error("Bạn không thể đấu giá");
+      }
       await runTransaction(this.db, async (transaction) => {
         const itemDoc = await transaction.get(itemRef);
         if (!itemDoc.exists()) {
@@ -233,7 +237,14 @@ class FirebaseService {
       throw error;
     }
   }
-
+  async getUserRole() {
+    const uid = await this.getCurrentUser();
+    if (uid) {
+      const userData = await this.getUserData(uid);
+      return userData ? userData.role : null;
+    }
+    return null; // User not authenticated
+  }
   async getBidHistory(userId) {
     try {
       const q = query(collection(this.db, "bids"), where("bidderId", "==", userId));

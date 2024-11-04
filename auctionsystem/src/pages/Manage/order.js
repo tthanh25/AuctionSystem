@@ -297,6 +297,9 @@ export default function ManageOrder() {
       console.error("Error deleting items:", error);
       setNotification({ message: "Xóa phiên đấu giá thất bại", severity: "error" });
     }
+    setTimeout(() => {
+      handleCloseNotification();
+    }, 4000);
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.

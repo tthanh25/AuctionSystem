@@ -13,10 +13,7 @@ function Protected({ path, children }) {
         return <HeaderOnly>{children}</HeaderOnly>;
     } 
 
-    // Check if user is logged in
     if (isLogged) {
-        // Admin access
-        
         console.log("role 1:");
         console.log(_.isEqual(role, 1));
         console.log("role 0:", role);
@@ -59,6 +56,8 @@ function Protected({ path, children }) {
 
     // Deny access
     return <h1>Bạn không có quyền truy cập</h1>;
+     
+    // return <AdminLayout>{children}</AdminLayout>
 }
 
 export default Protected;
