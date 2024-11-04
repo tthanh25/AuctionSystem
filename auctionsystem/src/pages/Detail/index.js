@@ -39,6 +39,13 @@ function Detail() {
   };
 
   const handleBidSubmit = async () => {
+
+    let role = JSON.parse(localStorage.getItem("role")); 
+    if (role != 0) {
+      setNotification({ message: "Bạn không có quyền", severity: "error" });
+      return;
+    }
+
     if (bidAmount == "" || bidAmount == null || bidAmount < 0) {
       setNotification({message: "Giá trị không hợp lệ", severity:"error"})
       return}
