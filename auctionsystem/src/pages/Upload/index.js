@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Button, Divider, InputAdornment, Paper, TextField, Alert, Fade, AlertTitle } from "@mui/material";
 import styles from "./Upload.module.scss";
 import classNames from "classnames/bind";
-import firebaseService from "~/services/firebase";
+import { handleToUploadGatekeeper } from "~/routes/gatekeeper";
 import { useParams } from "react-router-dom";
 import InputFileUpload from "./InputFileUpload";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
@@ -44,33 +44,30 @@ function Detail() {
   };
 
   const handleToUpload = async () => {
-    let role = JSON.parse(localStorage.getItem("role")); 
-    if (role != 1) {
-      setNotification({ message: "Bạn không có quyền", severity: "error" });
-      return;
-    }
-    setNotification({ message: "", severity: "success" });
-    for (let key in item) {
-      if (item[key] === "" || item[key] === null || item[key] < 0) {
-        setNotification({ message: "Giá trị không hợp lệ", severity: "error" });
-        return;
-      }
-    }
+    // let role = JSON.parse(localStorage.getItem("role")); 
+    // if (role != 1) {
+    //   setNotification({ message: "Bạn không có quyền", severity: "error" });
+    //   return;
+    // }
+    // setNotification({ message: "", severity: "success" });
+    // for (let key in item) {
+    //   if (item[key] === "" || item[key] === null || item[key] < 0) {
+    //     setNotification({ message: "Giá trị không hợp lệ", severity: "error" });
+    //     return;
+    //   }
+    // }
     try {
-      // Upload image to Firebase Storage and get the URL
-      const imageUrl = await firebaseService.uploadImage(item.imageUrl);
-
-      // Add item to Firebase
-      await firebaseService.addItem({
-        ...item,
-        imageUrl: imageUrl,
-      });
-
-      setNotification({ message: "Thêm phiên đấu giá thành công", severity: "success" });
+      await handleToUploadGatekeeper(setNotification, item, () => {
+        // Logic xử lý khi upload thành công
+        setNotification({ message: "Thêm phiên đấu giá thành công", severity: "success" });
+    });
     } catch (error) {
       console.error("Error adding item:", error);
       setNotification({ message: "Thêm phiên đấu giá thất bại", severity: "error" });
     }
+    setTimeout(() => {
+      handleCloseNotification();
+    }, 4000);
   };
 
   return (

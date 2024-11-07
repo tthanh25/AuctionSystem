@@ -37,11 +37,13 @@ function Protected({ path, children }) {
             if ((_.isEqual(path, "/customer") || 
                  _.isEqual(path, "/payment") || 
                  path.startsWith("/detail/") || 
-                 _.isEqual(path, "/transaction")) && 
-                !(_.isEqual(path, "/admin") || 
+                 _.isEqual(path, "/transaction")) 
+                 ||
+                (_.isEqual(path, "/admin") || 
                   _.isEqual(path, "/upload") || 
                   _.isEqual(path, "/manage") || 
-                  path.startsWith("/update/"))) {
+                  path.startsWith("/update/"))
+                ) {
                 return <CustomerLayout>{children}</CustomerLayout>;
             } else {
                 return <h1>Bạn không có quyền truy cập</h1>;

@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Button, Divider, InputAdornment, Paper, TextField, Alert, Fade, AlertTitle } from "@mui/material";
 import styles from "./Detail.module.scss";
 import classNames from "classnames/bind";
-import firebaseService from "~/services/firebase";
+import { handleBidSubmitGatekeeper } from "~/routes/gatekeeper";
 import { useParams } from "react-router-dom";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import firebaseService from "~/services/firebase";
 import { Timestamp } from "firebase/firestore";
 const cx = classNames.bind(styles);
 
@@ -40,31 +41,36 @@ function Detail() {
 
   const handleBidSubmit = async () => {
 
-    let role = JSON.parse(localStorage.getItem("role")); 
-    if (role != 0) {
-      setNotification({ message: "Bạn không có quyền", severity: "error" });
-      return;
-    }
+    // let role = JSON.parse(localStorage.getItem("role")); 
+    // if (role != 0) {
+    //   setNotification({ message: "Bạn không có quyền", severity: "error" });
+    //   return;
+    // }
 
-    if (bidAmount == "" || bidAmount == null || bidAmount < 0) {
-      setNotification({message: "Giá trị không hợp lệ", severity:"error"})
-      return}
-    else
+    // if (bidAmount == "" || bidAmount == null || bidAmount < 0) {
+    //   setNotification({message: "Giá trị không hợp lệ", severity:"error"})
+    //   return}
+    // else
     try {
+
+      await handleBidSubmitGatekeeper(setNotification,bidAmount,itemId,() => {
+        setNotification({ message: "Thêm phiên đấu giá thành công", severity: "success" });
+      })
+
       // Retrieve user ID from local storage
-      const userId = localStorage.getItem("uid");
+      // const userId = localStorage.getItem("uid");
 
-      // Check if userId is null or empty
-      if (!userId) {
-        throw new Error("Đăng nhập để đấu giá");
-      }
+      // // Check if userId is null or empty
+      // if (!userId) {
+      //   throw new Error("Đăng nhập để đấu giá");
+      // }
 
-      // Place the bid using the retrieved user ID
-      await firebaseService.placeBid(itemId, userId, bidAmount);
-      setNotification({ message: "Đấu giá thành công", severity: "success" });
-      // Optionally, you can fetch updated item data after placing the bid
-      // const updatedItem = await firebaseService.getItemById(itemId);
-      // setItem(updatedItem);
+      // // Place the bid using the retrieved user ID
+      // await firebaseService.placeBid(itemId, userId, bidAmount);
+      // setNotification({ message: "Đấu giá thành công", severity: "success" });
+      // // Optionally, you can fetch updated item data after placing the bid
+      // // const updatedItem = await firebaseService.getItemById(itemId);
+      // // setItem(updatedItem);
       fetch();
     } catch (error) {
       console.error("Error placing bid:", error);
