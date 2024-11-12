@@ -22,6 +22,7 @@ import { visuallyHidden } from "@mui/utils";
 import firebaseService from "~/services/firebase"; // Update the path to your Firebase service
 import dayjs from "dayjs";
 import { Alert, AlertTitle, Fade } from "@mui/material";
+import { deleteItemGatekeeper } from "~/routes/gatekeeper";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -282,13 +283,13 @@ export default function ManageOrder() {
     // Delete selected items from Firebase
     
     try {
-      let role = JSON.parse(localStorage.getItem("role")); 
-      if (role != 1) {
-        setNotification({ message: "Bạn không có quyền", severity: "error" });
-        return;
-      }
-      for (const id of selected) {
-        await firebaseService.deleteItem(id);
+      // let role = JSON.parse(localStorage.getItem("role")); 
+      // if (role != 1) {
+      //   setNotification({ message: "Bạn không có quyền", severity: "error" });
+      //   return;
+      // }
+      for (const id of selected) { 
+        await deleteItemGatekeeper(setNotification,id);
       }
       setItems((prevItems) => prevItems.filter((item) => !selected.includes(item.id)));
       setSelected([]);

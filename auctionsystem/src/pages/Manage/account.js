@@ -21,7 +21,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import firebaseService from "~/services/firebase";
 import { Alert, AlertTitle, Fade } from "@mui/material";
-
+import { deleteUserGatekeeper } from "~/routes/gatekeeper";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -236,14 +236,14 @@ export default function ManageAccount() {
 
     
     try {
-      let role = JSON.parse(localStorage.getItem("role")); 
-      if (role != 1) {
-        setNotification({ message: "Bạn không có quyền", severity: "error" });
-        return;
-      }
+      // let role = JSON.parse(localStorage.getItem("role")); 
+      // if (role != 1) {
+      //   setNotification({ message: "Bạn không có quyền", severity: "error" });
+      //   return;
+      // }
 
       // Call the Firebase service to delete selected users
-      await Promise.all(selected.map((id) => firebaseService.deleteUser(id)));
+      await Promise.all(selected.map((id) => deleteUserGatekeeper(setNotification,id)));
       // Remove the deleted users from the local state
       setUsers(users.filter((user) => !selected.includes(user.id)));
       setSelected([]);

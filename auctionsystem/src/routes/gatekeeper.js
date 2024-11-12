@@ -58,6 +58,36 @@ const handleBidSubmitGatekeeper = async (setNotification,bidAmount,itemId) => {
     }
     
   };
+const deleteItemGatekeeper = async (setNotification, id) => {
+  let role = 3; 
+  role = parseInt(localStorage.getItem("role"), 10)
+  if (!_.isEqual(role, 1)) {
+    setNotification({ message: "Bạn không có quyền", severity: "error" });
+    return;
+  }
+  try {
+    await firebaseService.deleteItem(id);
+  }
+  catch (error) {
+    console.error("Error deleting items:", error);
+    setNotification({ message: "Xóa phiên đấu giá thất bại", severity: "error" });
+  }
+}
 
+const deleteUserGatekeeper = async (setNotification, id) => {
+  let role = 3; 
+  role = parseInt(localStorage.getItem("role"), 10)
+  if (!_.isEqual(role, 1)) {
+    setNotification({ message: "Bạn không có quyền", severity: "error" });
+    return;
+  }
+  try {
+    await firebaseService.deleteUser(id);
+  }
+  catch (error) {
+    console.error("Error deleting items:", error);
+    setNotification({ message: "Xóa tài khoản thất bại", severity: "error" });
+  }
+}
 
-export { handleToUploadGatekeeper, handleBidSubmitGatekeeper };
+export { handleToUploadGatekeeper, handleBidSubmitGatekeeper, deleteItemGatekeeper, deleteUserGatekeeper };
