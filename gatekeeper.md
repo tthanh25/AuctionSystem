@@ -1,4 +1,4 @@
-# Gatekeeper
+# Gatekeeper Pattern
 ## Bối cảnh và vấn đề
 - Các dịch vụ đám mây hiển thị các điểm cuối cho phép ứng dụng khách gọi API của chúng. Mã được sử dụng để triển khai trình kích hoạt API hoặc thực hiện một số tác vụ, bao gồm nhưng không giới hạn ở việc xác thực, ủy quyền, xác thực tham số và xử lý một phần hoặc toàn bộ. Mã API có thể thay mặt khách hàng truy cập vào bộ lưu trữ và các dịch vụ khác. 
 - Nếu một người dùng độc hại xâm nhập vào hệ thống và có được quyền truy cập vào môi trường lưu trữ ứng dụng, các cơ chế bảo mật và quyền truy cập vào dữ liệu cũng như các dịch vụ khác sẽ bị lộ. Kết quả là, người dùng độc hại có thể có quyền truy cập không giới hạn vào thông tin xác thực, khóa lưu trữ, thông tin nhạy cảm, và các dịch vụ khác.
