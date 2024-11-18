@@ -25,4 +25,31 @@
   npm start
   ```
 
+## Demo
+```
+            Request                 Validated Request                 Data
+Frontend <----------> Gatekeeper <---------------------> Firebase <----------> Database
 
+```
+1. Khi chưa đăng nhập thì không có quyền đấu giá, mà chỉ có quyền xem phiên đầu giá. Bạn phải đăng ký tài khoản để đấu giá.
+2. Customer có quyền truy cập vào các địa chỉ như:
+  ```
+  /customer
+  /payment
+  /transaction
+  /detail/
+  ```
+3. Admin có quyền truy cập vào các địa chỉ như:
+  ```
+  /admin
+  /upload
+  /manage
+  /update/
+  ```
+4. Khi thực hiện các chức năng sẽ kiểm tra với các quyền tương ứng:
+   - Đấu giá chỉ dành cho Customer
+   - Tải lên phiên đấu giá chỉ dành cho Admin
+   - Chỉnh sửa phiên đấu giá chỉ dành cho Admin
+   - Xóa tài khoản/ phiên đấu giá chỉ dành cho Admin
+   ...
+5. Các dữ liệu trong request sẽ được kiểm tra hợp lệ hay không: đăng nhập, đăng ký, đấu giá, xóa các phiên đấu giá, chỉnh sửa các phiên đấu giá, xóa tài khoản,...
