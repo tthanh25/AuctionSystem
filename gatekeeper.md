@@ -19,8 +19,8 @@ Xem xét các điểm sau đây khi quyết định cách triển khai mẫu nà
 2.	**Chạy Gatekeeper Trong Chế Độ Quyền Hạn Hạn Chế:** Gatekeeper phải chạy trong chế độ quyền hạn hạn chế, điều này thường yêu cầu chạy gatekeeper và máy chủ tin cậy trong các dịch vụ lưu trữ hoặc máy ảo riêng biệt.
 3.	**Không Thực Hiện Xử Lý Liên Quan Đến Ứng Dụng:** Gatekeeper không nên thực hiện bất kỳ xử lý nào liên quan đến ứng dụng hoặc dịch vụ hoặc truy cập bất kỳ dữ liệu nào. Chức năng của nó hoàn toàn là xác thực và làm sạch các yêu cầu. Các máy chủ tin cậy có thể cần thực hiện xác thực yêu cầu bổ sung, nhưng gatekeeper nên thực hiện xác thực cốt lõi.
 4.	**Sử Dụng Kênh Giao Tiếp Bảo Mật:** Sử dụng kênh giao tiếp bảo mật (HTTPS, SSL hoặc TLS) giữa gatekeeper và các máy chủ hoặc tác vụ tin cậy khi có thể. Tuy nhiên, một số môi trường lưu trữ không hỗ trợ HTTPS trên các điểm cuối nội bộ.
-5.	Tác Động Đến Hiệu Suất: Việc thêm lớp bảo vệ để triển khai mẫu gatekeeper có thể ảnh hưởng đến hiệu suất do cần thêm xử lý và giao tiếp mạng.
-6.	Điểm lỗi duy nhất: Instance gatekeeper có thể trở thành lỗi duy nhất. Để giảm thiểu tác động của sự cố, hãy xem xét triển khai các instance dư thừa và sử dụng cơ chế tự động mở rộng để đảm bảo khả năng duy trì tính khả dụng.
+5.	**Tác Động Đến Hiệu Suất:** Việc thêm lớp bảo vệ để triển khai mẫu gatekeeper có thể ảnh hưởng đến hiệu suất do cần thêm xử lý và giao tiếp mạng.
+6.	**Điểm lỗi duy nhất:** Instance gatekeeper có thể trở thành lỗi duy nhất. Để giảm thiểu tác động của sự cố, hãy xem xét triển khai các instance dư thừa và sử dụng cơ chế tự động mở rộng để đảm bảo khả năng duy trì tính khả dụng.
 
 ## Khi nào sử dụng Gatekeeper pattern?
 Mẫu này hữu ích cho các ứng dụng mà:
